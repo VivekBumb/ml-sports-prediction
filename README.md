@@ -55,3 +55,259 @@ Gantt Chart
 ![image](https://github.gatech.edu/vbumb3/ml-sports-prediction/blob/main/Gantt_chart.png)
 
 
+# Data Collection Process
+
+## Overview
+
+Our NFL betting prediction system uses the `nfl_data_py` package to collect official NFL data directly from league sources, eliminating the need for web scraping and ensuring reliable, consistent data quality.
+
+## Data Sources
+
+```python
+# Primary data collection via nfl_data_py package
+import nfl_data_py as nfl
+
+# Two main data streams:
+games = nfl.import_schedules([2020, 2021, 2022, 2023, 2024])       # Game results
+weekly_stats = nfl.import_weekly_data([2020, 2021, 2022, 2023, 2024])  # Team stats
+```
+
+## Data Coverage
+
+- **Time Period:** 2020-2024 NFL seasons (5 complete seasons)
+- **Game Data:** 1,408 total games including playoffs
+- **Team Statistics:** Weekly performance metrics for all 32 NFL teams
+- **Data Quality:** Official NFL statistics (no web scraping required)
+
+## Key Advantages
+
+**Official Data:** Direct from NFL sources via nfl_data_py (no web scraping) 
+**Consistent Format:** Standardized column names and data types  
+**Real-time Updates:** Package automatically handles data formatting changes  
+**Complete Coverage:** All games, teams, and seasons in one source  
+
+## Data Download Script
+
+```bash
+# Run the data collection and preprocessing
+python simplified_nfl_data.py
+```
+Note: Command could be python3 or depending upon the python version installed on the system.
+
+## Dependencies
+
+```bash
+pip install nfl_data_py pandas numpy
+```
+
+## Output Files Generated
+
+- `clean_nfl_games.csv` - Complete game results with scores and metadata
+
+## Error Handling
+
+The script includes robust error handling for:
+
+- Missing `nfl_data_py` package installation
+- Data compatibility checks
+
+
+
+## Data Freshness
+
+- **Current dataset:** Through 2024 NFL season (complete)
+- **For 2025 predictions:** Script can be easily updated to include new season data
+- **Update frequency:** Run script after each NFL season concludes
+
+
+# Data Preprocessing
+
+## Overview
+
+The preprocessing transforms raw NFL game data into ML ready features through statistical aggregation, feature engineering, and standardization. This follows the methodology outlined in our research proposal for optimal predictive performance.
+
+## Preprocessing Steps
+
+### 1. Data Cleaning & Validation
+
+Raw NFL data contains incomplete games with missing essential information that would cause errors in downstream calculations. After cleaning, 1,408 complete games remained for analysis. Machine learning algorithms also requires numerical targets (0/1) rather than categorical outcomes.
+
+```python
+# Remove games with missing scores or team information
+games = games.dropna(subset=['home_score', 'away_score', 'home_team', 'away_team'])
+
+# Create binary target variable
+games['home_win'] = (games['home_score'] > games['away_score']).astype(int)
+```
+
+### 2. Season-Level Team Statistics
+
+Season averages establish each team's baseline strength and overall quality. It provides essential context for predicting individual game matchups.
+
+```python
+# Aggregate weekly stats into season averages
+season_stats = weekly_df.groupby(['season', 'team']).agg({
+    'passing_yards': 'mean',
+    'rushing_yards': 'mean', 
+    'points_scored': 'mean',
+    'points_allowed': 'mean'
+}).reset_index()
+
+# Calculate differentials
+season_stats['point_differential'] = season_stats['points_scored'] - season_stats['points_allowed']
+```
+
+### 3. Rolling Performance Metrics 
+
+Recent team performance (momentum / form) is more predictive than season-long averages for sports outcomes.
+
+```python
+# 5-game rolling averages for momentum analysis
+def calculate_rolling_averages(games_df, window=5):
+    for team in all_teams:
+        # Calculate rolling statistics
+        rolling_win_pct = recent_games['won'].rolling(window).mean()
+        rolling_points_scored = recent_games['points_scored'].rolling(window).mean()
+        rolling_point_diff = rolling_points_scored - rolling_points_allowed
+```
+
+**Rolling Features Created:**
+- `home_rolling_win_pct` / `away_rolling_win_pct`
+- `home_rolling_points` / `away_rolling_points`
+- `rolling_win_advantage` / `rolling_point_diff_advantage`
+
+### 4. Matchup-Level Feature Engineering
+
+Football outcomes depend on relative matchups and mostly not absolute team strength. A good offense vs weak defense creates different dynamics than good offense vs strong defense.
+
+```python
+# Transform team-level stats into head-to-head comparisons
+matchup_features = {
+    'point_diff_advantage': home_point_diff - away_point_diff,
+    'home_off_vs_away_def': home_offense - away_defense,
+    'yards_advantage': home_yards_advantage - away_yards_advantage
+}
+```
+
+### 5. One-Hot Team Encoding 
+
+To process categorical text data like team names, etc. in numerical context.
+
+```python
+# Create binary indicators for each team (home/away)
+home_encoded = pd.get_dummies(matchup_df['home_team'], prefix='home')
+away_encoded = pd.get_dummies(matchup_df['away_team'], prefix='away')
+
+# Results in 64 team features (32 home + 32 away)
+# Examples: home_KC, away_BUF, home_TB, etc.
+```
+
+### 6. Feature Standardization 
+
+Features with different scales (points vs percentages) would dominate the gradient descent optimization and will prevent the algorithm from learning properly. Also, need it for logistic regression convergence
+
+```python
+# Z-score normalization to balance gradients: (value - mean) / std or z = (x - μ) / σ
+numerical_features = [
+    'home_point_diff', 'away_point_diff', 'point_diff_advantage',
+    'rolling_win_advantage', 'home_rolling_points', etc.
+]
+
+for feature in numerical_features:
+    X[feature] = (X[feature] - X[feature].mean()) / X[feature].std()
+```
+
+## Feature Categories Created
+
+### Performance Features (12 total): HOW GOOD ARE THE TEAMS?
+
+- **Season Stats:** `home_point_diff`, `away_point_diff`, `point_diff_advantage`
+- **Matchup Stats:** `home_off_vs_away_def`, `away_off_vs_home_def`, `yards_advantage`
+- **Rolling Stats:** `home_rolling_win_pct`, `rolling_win_advantage`, `rolling_point_diff_advantage`
+
+### Team Identity Features (64 total): WHO IS PLAYING?
+
+- **Home Teams:** `home_ARI`, `home_ATL`, `home_BAL`, ..., `home_WAS` (32 features)
+- **Away Teams:** `away_ARI`, `away_ATL`, `away_BAL`, ..., `away_WAS` (32 features)
+
+## Data Quality Assurance
+
+### Missing Value Handling
+
+Early-season games (weeks 1-4) don't have enough prior games for 5-game rolling averages and will create NaN values, this would crash the machine learning algorithm. Imputation with league averages ensures every game has valid features.
+
+```python
+# Imputation strategy for early-season games
+def get_rolling_stats_for_week(team, season, week):
+    if week < 5:  # Insufficient rolling data
+        return default_values  # Use league averages
+    else:
+        return actual_rolling_stats
+```
+
+### Data Leakage Prevention
+Can't use future game results to predict past games. Otherwise, the model will look artificially good during training and probably fail in real betting scenarios.
+
+```python
+# Rolling stats use only PRIOR games to prevent future information
+rolling_stats = team_data[team_data['week'] < current_week]
+```
+
+### Chronological Validation
+
+Random train/test shuffling would overestimate performance. As the data is in time series, chronological validation can actually predict the FUTURE using only the PAST, which is exactly what sports betting requires.
+
+```python
+# Train/test split respects time ordering
+split_idx = int(0.8 * len(X))  # 80% train, 20% test
+X_train, X_test = X[:split_idx], X[split_idx:]  # No random shuffling
+```
+
+## Output Specifications
+
+### Final Dataset Dimensions
+
+- **Samples:** 1,408 NFL games (2020-2024)
+- **Features:** 76 total features
+  - 12 performance/statistical features
+  - 64 team encoding features (32 home + 32 away)
+- **Target:** Binary home team victory (0/1)
+
+### Feature Scaling Results
+
+- **Numerical features:** Mean ≈ 0, Standard deviation ≈ 1
+- **Binary features:** Values in {0, 1}
+- **No missing values:** Complete dataset ready for ML
+
+## Output Files Generated
+
+- `team_season_stats.csv` - Aggregated team performance by season
+- `betting_features_X.csv` - ML-ready feature matrix (1,408 × 76)
+- `betting_targets_y.csv` - Binary target variable (home team wins)
+- `complete_betting_dataset.csv` - Full dataset with all features and targets
+- `features_names.txt` - List of all 76 feature names
+
+## Preprocessing Validation
+
+### Data Integrity Checks
+
+
+- No missing values in final dataset
+- All features properly scaled
+
+
+### Preprocessing methods
+
+**5-game rolling averages:** Implemented as specified  
+**One-hot team encoding:** All 32 teams encoded  
+**Feature standardization:** Z-score normalization applied  
+**Relative performance metrics:** Advantage calculations included  
+**Data leakage prevention:** Temporal ordering respected  
+
+## Preprocessing Runtime
+
+- **Execution time:** ~30-60 seconds on standard hardware
+- **Memory usage:** <500MB peak
+- **Dependencies:** pandas, numpy only
+
+
