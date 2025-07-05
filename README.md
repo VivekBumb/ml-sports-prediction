@@ -311,3 +311,110 @@ X_train, X_test = X[:split_idx], X[split_idx:]  # No random shuffling
 - **Dependencies:** pandas, numpy only
 
 
+
+## Model Implementation/Evaluation - Midpoint
+Our approach consists of four primary phases: data acquisition, preprocessing, feature engineering, and model training. The following section will be discussing the training for our first model: logistic regression. 
+
+Justifications:
+- Provides interpretable coefficients
+- Outputs probability estimates that are useful for betting thresholds
+- Fast to train and thus ideal for initial benchmarking
+
+This model was used as our baseline classifier for predicting whether the home team would win and was trained using **chronologically split** data to avoid data leakage. As referenced in our preprocessing section (split_idx), the first 80% of games were used for training and the final 20% were used for testing. This mimics a real-world betting environment where predictions are made on future games using only past data.
+
+### Quantitative Metrics
+We evaluated the model using 3 key metrics:
+- **Accuracy**: Proportion of correctly predicted outcomes
+- **Return on Investment (ROI)**: Simulated betting performance using confidence threshold of 60%
+- **Brier Score**: Level of predictive accuracy
+
+
+## Results/Discussion
+
+### Test Accuracy  
+- Achieved **64.5%**, which is significantly above the 52.4% break-even threshold for betting  
+- Home win rate baseline: 53.8%  
+- Indicates that the model captures meaningful structure in NFL outcomes
+
+---
+
+### Return on Investment (ROI) Simulation
+
+We simulated a betting strategy that places a bet only when the predicted win probability exceeded 60% (or was below 40% for away wins). Bets are $100 each, with +100 payout and -110 loss (standard sportsbook odds).
+
+- **Games Bet:** 159  
+- **Correct Bets:** 101  
+- **Incorrect Bets:** 58  
+- **Total Profit:** **$6,450.00**  
+- **Total Wagered:** $15,900.00  
+- **ROI:** **40.57%**
+
+> Model confidence was highly predictive of betting success — the high-confidence bets had over 63% accuracy.
+
+---
+
+### Brier Score – Probability Calibration
+
+To measure how well our predicted probabilities aligned with actual outcomes, we evaluated the Brier score.
+
+- **Brier Score:** **0.2212**
+
+Interpretation:
+- A perfect model = 0.0  
+- A naive model (50/50 every time) = 0.25  
+- Our model = 0.2212 → indicates a good level of predictive accuracy
+
+---
+
+### Visual Analysis
+
+#### Cost Function Convergence
+(PUT PIC HERE)
+- Gradient ascent converged smoothly within 1000 iterations
+- Cost plot showed steady decline (no oscillation)
+
+#### Feature Importance
+(PUT PIC HERE)
+- Top features included:
+  - `home_point_diff`
+  - `rolling_win_advantage`
+  - `away_rolling_win_pct`
+  - `home_KC`, `away_BUF`  
+- Suggests both recent team form and team identity matter a significant amount
+
+#### Prediction Confidence
+(PUT PIC HERE)
+- Accuracy increased with confidence:
+  - Low confidence: ~55%  
+  - Medium confidence: ~60%  
+  - High confidence: **76%**
+
+#### ROI vs Confidence Threshold
+(PUT PIC HERE)
+- ROI peaked when betting only on games with model confidence ≥ 60%
+- Most profitable threshold range: **60–70%**
+
+#### Profit Timeline
+(PUT PIC HERE)
+- Net profit of $6,450 was earned over the 2024 test season
+- Profit grew steadily, indicating stable model performance over time
+
+---
+
+### Summary/Next Steps
+
+#### Why the Model Performed Well
+- Rolling momentum and matchup features captured key short-term trends
+- Matchup-relative features (not just absolute strength) improved predictions
+- Model confidence mapped well to bet profitability
+
+#### Limitations
+- Heavy reliance on team one-hot encoding (e.g., `home_KC`, `away_BUF`)
+- Missing external variables like injury reports, rest days, travel distance, weather, etc.
+- Logistic regression assumes linear boundaries, which may be oversimplification
+
+#### Next Steps
+- Add **Random Forest** for nonlinear patterns
+- 
+
+## More References (if needed)
