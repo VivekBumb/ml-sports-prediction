@@ -386,7 +386,7 @@ Interpretation:
   - `home_KC`, `away_BUF`  
 - Suggests both recent team form and team identity matter a significant amount
 
-#### Prediction Confidence
+#### Prediction Confidence and Profit Timeline
 
 ![Prediction Analysis](results/visualizations/prediction_analysis.png)
 
@@ -394,6 +394,9 @@ Interpretation:
   - Low confidence: ~55%  
   - Medium confidence: ~60%  
   - High confidence: **76%**
+ 
+- Net profit of $6,450 was earned over the 2024 test season
+- Profit grew steadily, indicating stable model performance over time
 
 #### ROI vs Confidence Threshold
  
@@ -401,13 +404,6 @@ Interpretation:
 
 - ROI peaked when betting only on games with model confidence ≥ 60%
 - Most profitable threshold range: **60–70%**
-
-#### Profit Timeline
-
-![Profit Timeline](results/visualizations/roi_analysis.png)
-
-- Net profit of $6,450 was earned over the 2024 test season
-- Profit grew steadily, indicating stable model performance over time
 
 ---
 
