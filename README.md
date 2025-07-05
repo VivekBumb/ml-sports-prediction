@@ -369,12 +369,16 @@ Interpretation:
 ### Visual Analysis
 
 #### Cost Function Convergence
-(PUT PIC HERE)
+
+![Cost Function Convergence](results/visualizations/cost_convergence_plot.png)
+
 - Gradient ascent converged smoothly within 1000 iterations
 - Cost plot showed steady decline (no oscillation)
 
 #### Feature Importance
-(PUT PIC HERE)
+
+![Feature Importance](results/visualizations/feature_importance_top15.png)
+
 - Top features included:
   - `home_point_diff`
   - `rolling_win_advantage`
@@ -383,19 +387,25 @@ Interpretation:
 - Suggests both recent team form and team identity matter a significant amount
 
 #### Prediction Confidence
-(PUT PIC HERE)
+
+![Prediction Analysis](results/visualizations/prediction_analysis.png)
+
 - Accuracy increased with confidence:
   - Low confidence: ~55%  
   - Medium confidence: ~60%  
   - High confidence: **76%**
 
 #### ROI vs Confidence Threshold
-(PUT PIC HERE)
+ 
+![ROI Analysis](results/visualizations/roi_analysis.png)
+
 - ROI peaked when betting only on games with model confidence ≥ 60%
 - Most profitable threshold range: **60–70%**
 
 #### Profit Timeline
-(PUT PIC HERE)
+
+![Profit Timeline](results/visualizations/roi_analysis.png)
+
 - Net profit of $6,450 was earned over the 2024 test season
 - Profit grew steadily, indicating stable model performance over time
 
