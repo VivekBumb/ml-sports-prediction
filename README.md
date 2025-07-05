@@ -342,14 +342,14 @@ We evaluated the model using 3 key metrics:
 
 We simulated a betting strategy that places a bet only when the predicted win probability exceeded 60% (or was below 40% for away wins). Bets are $100 each, with +100 payout and -110 loss (standard sportsbook odds).
 
-- **Games Bet:** 159  
-- **Correct Bets:** 101  
-- **Incorrect Bets:** 58  
-- **Total Profit:** **$6,450.00**  
-- **Total Wagered:** $15,900.00  
-- **ROI:** **40.57%**
+- **Games Bet:** 162  
+- **Correct Bets:** 117  
+- **Incorrect Bets:** 45  
+- **Total Profit:** **$6,750.00**  
+- **Total Wagered:** $16,200.00  
+- **ROI:** **41.7%**
 
-> Model confidence was highly predictive of betting success — the high-confidence bets had over 63% accuracy.
+> Model confidence was highly predictive of betting success — the high-confidence bets had over 72.2% accuracy.
 
 ---
 
@@ -357,12 +357,12 @@ We simulated a betting strategy that places a bet only when the predicted win pr
 
 To measure how well our predicted probabilities aligned with actual outcomes, we evaluated the Brier score.
 
-- **Brier Score:** **0.2212**
+- **Brier Score:** **0.234**
 
 Interpretation:
 - A perfect model = 0.0  
 - A naive model (50/50 every time) = 0.25  
-- Our model = 0.2212 → indicates a good level of predictive accuracy
+- Our model = 0.234 → indicates a good level of predictive accuracy
 
 ---
 
