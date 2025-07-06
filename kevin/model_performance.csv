@@ -1,8 +1,0 @@
-metric,value
-train_accuracy,0.6518650088809946
-test_accuracy,0.6524822695035462
-total_games,282.0
-correct_predictions,184.0
-home_win_rate,0.5383522727272727
-model_bias,0.14646650630897778
-convergence_iterations,1000.0
