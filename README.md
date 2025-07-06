@@ -438,6 +438,22 @@ Interpretation:
 - Add **Random Forest** for nonlinear patterns
 - Add **Support Vector Machine (SVM)** for the best decision boundaries for game predictions
 
+
+
+#
+
+| Name | Midterm Contributions |
+|------|----------------------|
+| Kevin | README documentation, project introduction, problem statement, and final report writing |
+| Thavaisya | Data collection/download, results analysis and visualizations |
+| Dishi | Data preprocessing pipeline, feature engineering, and performance evaluation metrics |
+| Vivek | Model implementation (logistic regression) |
+
+#
+Gantt Chart
+
+![image](https://github.gatech.edu/vbumb3/ml-sports-prediction/blob/main/Gantt_chart.png)
+
 #
 References:
 
@@ -456,19 +472,5 @@ References:
 [7] Steyerberg, E. W., Vickers, A. J., Cook, N. R., Gerds, T., Gonen, M., Obuchowski, N., Pencina, M. J., & Kattan, M. W. (2010). Assessing the performance of prediction models. Epidemiology, 21(1), 128–138. https://doi.org/10.1097/ede.0b013e3181c30fb2
 
 [8] R. M. Galekwa et al., "A Systematic Review of Machine Learning in Sports Betting: Techniques, Challenges, and Future Directions," arXiv preprint arXiv:2410.21484, 2024.
-
-#
-
-| Name | Midterm Contributions |
-|------|----------------------|
-| Kevin | README documentation, project introduction, problem statement, and final report writing |
-| Thavaisya | Data collection/download, results analysis and visualizations |
-| Dishi | Data preprocessing pipeline, feature engineering, and performance evaluation metrics |
-| Vivek | Model implementation (logistic regression) |
-
-#
-Gantt Chart
-
-![image](https://github.gatech.edu/vbumb3/ml-sports-prediction/blob/main/Gantt_chart.png)
 
 
