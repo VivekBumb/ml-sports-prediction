@@ -104,47 +104,19 @@ The preprocessing transforms raw NFL game data into ML ready features through st
 ## Preprocessing Steps
 
 ### 1. Data Cleaning & Validation
+**Functions:** `.dropna()`, `.astype()`
 
-Raw NFL data contains incomplete games with missing essential information that would cause errors in downstream calculations. After cleaning, 1,408 complete games remained for analysis. Machine learning algorithms also requires numerical targets (0/1) rather than categorical outcomes.
-
-```python
-# Remove games with missing scores or team information
-games = games.dropna(subset=['home_score', 'away_score', 'home_team', 'away_team'])
-
-# Create binary target variable
-games['home_win'] = (games['home_score'] > games['away_score']).astype(int)
-```
+Raw NFL data contains incomplete games with missing essential information that would cause errors in downstream calculations. After cleaning, 1,408 complete games remained for analysis. Machine learning algorithms also require numerical targets (0/1) rather than categorical outcomes.
 
 ### 2. Season-Level Team Statistics
+**Functions:** `.groupby()`, `.agg()`, `.reset_index()`
 
 Season averages establish each team's baseline strength and overall quality. It provides essential context for predicting individual game matchups.
 
-```python
-# Aggregate weekly stats into season averages
-season_stats = weekly_df.groupby(['season', 'team']).agg({
-    'passing_yards': 'mean',
-    'rushing_yards': 'mean', 
-    'points_scored': 'mean',
-    'points_allowed': 'mean'
-}).reset_index()
-
-# Calculate differentials
-season_stats['point_differential'] = season_stats['points_scored'] - season_stats['points_allowed']
-```
-
-### 3. Rolling Performance Metrics 
+### 3. Rolling Performance Metrics
+**Functions:** `calculate_rolling_averages()`, `.rolling()`, `.mean()`
 
 Recent team performance (momentum / form) is more predictive than season-long averages for sports outcomes.
-
-```python
-# 5-game rolling averages for momentum analysis
-def calculate_rolling_averages(games_df, window=5):
-    for team in all_teams:
-        # Calculate rolling statistics
-        rolling_win_pct = recent_games['won'].rolling(window).mean()
-        rolling_points_scored = recent_games['points_scored'].rolling(window).mean()
-        rolling_point_diff = rolling_points_scored - rolling_points_allowed
-```
 
 **Rolling Features Created:**
 - `home_rolling_win_pct` / `away_rolling_win_pct`
@@ -152,45 +124,19 @@ def calculate_rolling_averages(games_df, window=5):
 - `rolling_win_advantage` / `rolling_point_diff_advantage`
 
 ### 4. Matchup-Level Feature Engineering
+**Functions:** `create_matchup_features()`, dictionary operations
 
-Football outcomes depend on relative matchups and mostly not absolute team strength. A good offense vs weak defense creates different dynamics than good offense vs strong defense.
+Football outcomes depend more on relative matchups than absolute team strength. A good offense vs weak defense creates different dynamics than good offense vs strong defense.
 
-```python
-# Transform team-level stats into head-to-head comparisons
-matchup_features = {
-    'point_diff_advantage': home_point_diff - away_point_diff,
-    'home_off_vs_away_def': home_offense - away_defense,
-    'yards_advantage': home_yards_advantage - away_yards_advantage
-}
-```
+### 5. One-Hot Team Encoding
+**Functions:** `pd.get_dummies()`, `pd.concat()`
 
-### 5. One-Hot Team Encoding 
+Machine learning algorithms require numerical inputs and cannot process categorical text data like team names (e.g., "Chargers", "Dolphins").
 
-To process categorical text data like team names, etc. in numerical context.
+### 6. Feature Standardization
+**Functions:** `manual_standardize()`, `.mean()`, `.std()`
 
-```python
-# Create binary indicators for each team (home/away)
-home_encoded = pd.get_dummies(matchup_df['home_team'], prefix='home')
-away_encoded = pd.get_dummies(matchup_df['away_team'], prefix='away')
-
-# Results in 64 team features (32 home + 32 away)
-# Examples: home_KC, away_BUF, home_TB, etc.
-```
-
-### 6. Feature Standardization 
-
-Features with different scales (points vs percentages) would dominate the gradient descent optimization and will prevent the algorithm from learning properly. Also, need it for logistic regression convergence
-
-```python
-# Z-score normalization to balance gradients: (value - mean) / std or z = (x - μ) / σ
-numerical_features = [
-    'home_point_diff', 'away_point_diff', 'point_diff_advantage',
-    'rolling_win_advantage', 'home_rolling_points', etc.
-]
-
-for feature in numerical_features:
-    X[feature] = (X[feature] - X[feature].mean()) / X[feature].std()
-```
+Features with different scales (points vs percentages) would dominate the gradient descent optimization and prevent the algorithm from learning properly. This is also critical for logistic regression convergence.
 
 ## Feature Categories Created
 
@@ -208,35 +154,19 @@ for feature in numerical_features:
 ## Data Quality Assurance
 
 ### Missing Value Handling
+**Functions:** `get_rolling_stats_for_week()`
 
-Early-season games (weeks 1-4) don't have enough prior games for 5-game rolling averages and will create NaN values, this would crash the machine learning algorithm. Imputation with league averages ensures every game has valid features.
-
-```python
-# Imputation strategy for early-season games
-def get_rolling_stats_for_week(team, season, week):
-    if week < 5:  # Insufficient rolling data
-        return default_values  # Use league averages
-    else:
-        return actual_rolling_stats
-```
+Early-season games (weeks 1-4) don't have enough prior games for 5-game rolling averages, which creates NaN values that would crash the machine learning algorithm. Imputation with league averages ensures every game has valid features.
 
 ### Data Leakage Prevention
+**Functions:** `.loc[]`
+
 Can't use future game results to predict past games. Otherwise, the model will look artificially good during training and probably fail in real betting scenarios.
 
-```python
-# Rolling stats use only PRIOR games to prevent future information
-rolling_stats = team_data[team_data['week'] < current_week]
-```
-
 ### Chronological Validation
+**Functions:** `sort_values()`
 
-Random train/test shuffling would overestimate performance. As the data is in time series, chronological validation can actually predict the FUTURE using only the PAST, which is exactly what sports betting requires.
-
-```python
-# Train/test split respects time ordering
-split_idx = int(0.8 * len(X))  # 80% train, 20% test
-X_train, X_test = X[:split_idx], X[split_idx:]  # No random shuffling
-```
+Random train/test shuffling would overestimate performance. Since this is time-series data, chronological validation ensures the model can predict future outcomes using only past data, which is exactly what sports betting requires.
 
 ## Output Specifications
 
@@ -266,24 +196,18 @@ X_train, X_test = X[:split_idx], X[split_idx:]  # No random shuffling
 
 ### Data Integrity Checks
 
+The preprocessing pipeline includes several validation steps to ensure data quality:
 
 - No missing values in final dataset
 - All features properly scaled
+- Target distribution: 57.2% home wins (realistic)
+- Feature correlation analysis completed
+- Chronological ordering maintained
 
-
-### Preprocessing methods
-
-**5-game rolling averages:** Implemented as specified  
-**One-hot team encoding:** All 32 teams encoded  
-**Feature standardization:** Z-score normalization applied  
-**Relative performance metrics:** Advantage calculations included  
-**Data leakage prevention:** Temporal ordering respected  
-
-## Preprocessing Runtime
+### Preprocessing Runtime
 
 - **Execution time:** ~30-60 seconds on standard hardware
 - **Memory usage:** <500MB peak
-- **Dependencies:** pandas, numpy only
 
 
 
@@ -297,45 +221,45 @@ Justifications:
 
 This model was used as our baseline classifier for predicting whether the home team would win and was trained using **chronologically split** data to avoid data leakage. As referenced in our preprocessing section (split_idx), the first 80% of games were used for training and the final 20% were used for testing. This mimics a real-world betting environment where predictions are made on future games using only past data.
 
-## Logistic Regression Model Flow
+## Logistic Regression Steps
 
-## Step 1: Data Preparation
+## 1: Data Preparation
 **Functions:** `pd.read_csv()`
 Loads CSV files containing NFL game data. A total of 1,408 games with 76 features each (such as team statistics and rolling averages) and the actual results (home team winning or losing) make up the data.
 
-## Step 2: Model Initialization
+## 2: Model Initialization
 **Functions:** `__init__()`  
 Establishes the learning rules (how quickly to learn, when to stop, etc.) and builds a logistic regression model object. 
 
-## Step 3: Start Training 
+## 3: Start Training 
 **Functions:** `fit()`
 Starts the training procedure. It creates 77 random coefficient guesses (one for each feature plus bias) after first adding a bias column to the data (such as a y-intercept). The starting points are these arbitrary numbers.
 
-## Step 4: Training Loop (347 Iterations)
+## 4: Training Loop (347 Iterations)
 **Functions:** `for loop` inside `fit()`  
 Repeats the learning process 347 times. The model examines every game in each iteration, evaluates how inaccurate its predictions are, and modifies the coefficients to improve accuracy.
 
-### Step 4a: Calculate Cost Function
+### 4a: Calculate Cost Function
 **Functions:** `compute_cost()` 
 Assesses the model's current performance. uses the current coefficients to make predictions on each of the 1,126 training games and calculates how much the predictions differ from reality.
 
-#### Step 4a.1: Apply Sigmoid Function
+#### 4a.1: Apply Sigmoid Function
 **Functions:** `sigmoid()`  
 Creates probabilities between 0 and 1 from the raw mathematical computations.
 
-### Step 4b: Compute Gradient
+### 4b: Compute Gradient
 **Functions:** `compute_gradient()`
 Determines the direction in which each coefficient should be adjusted. Determine whether and how much each of the 77 coefficients should rise or fall in order to enhance predictions.
 
-### Step 4c: Weight Update
+### 4c: Weight Update
 **Functions:** Direct assignment with `+`, `*` operators  
 Modifies the coefficients in accordance with the gradient function's recommendations. Make a tiny adjustment to each coefficient to increase accuracy.
 
-### Step 4d: Check Convergence
+### 4d: Check Convergence
 **Functions:** `np.linalg.norm()`  
 It checks to see if there is much less change in the coefficients. Stop training if they are stable (convergent). If not, return and use the new coefficients to repeat the loop.
 
-## Step 5: Store Optimized Coefficients
+## 5: Store Optimized Coefficients
 **Functions:** Assignment to `self.weights`  
 This process has produced 76 optimized coefficients after 347 rounds, such as `away_KC = 0.593`, which collectively predict NFL games with an accuracy of 64.9%. Based on five years of NFL data, these coefficients have "learned" what matters most for winning games.
 
