@@ -5,8 +5,8 @@ home_off_vs_away_def
 away_off_vs_home_def
 yards_advantage
 home_rolling_win_pct
-away_rolling_win_pct
 home_rolling_points
+away_rolling_win_pct
 away_rolling_points
 rolling_win_advantage
 rolling_point_diff_advantage
