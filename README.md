@@ -114,7 +114,7 @@ Raw NFL data contains incomplete games with missing essential information that w
 Season averages establish each team's baseline strength and overall quality. It provides essential context for predicting individual game matchups.
 
 ### 3. Rolling Performance Metrics
-**Functions:** `calculate_rolling_averages()`, `.rolling()`, `.mean()`
+**Functions:** `.iloc()`, `.mean()`
 
 Recent team performance (momentum / form) is more predictive than season-long averages for sports outcomes.
 
@@ -124,8 +124,7 @@ Recent team performance (momentum / form) is more predictive than season-long av
 - `rolling_win_advantage` / `rolling_point_diff_advantage`
 
 ### 4. Matchup-Level Feature Engineering
-**Functions:** `create_matchup_features()`, dictionary operations
-
+**Functions:** `Calculations`  
 Football outcomes depend more on relative matchups than absolute team strength. A good offense vs weak defense creates different dynamics than good offense vs strong defense.
 
 ### 5. One-Hot Team Encoding
@@ -134,7 +133,7 @@ Football outcomes depend more on relative matchups than absolute team strength. 
 Machine learning algorithms require numerical inputs and cannot process categorical text data like team names (e.g., "Chargers", "Dolphins").
 
 ### 6. Feature Standardization
-**Functions:** `manual_standardize()`, `.mean()`, `.std()`
+**Functions:** `.mean()`, `.std()`
 
 Features with different scales (points vs percentages) would dominate the gradient descent optimization and prevent the algorithm from learning properly. This is also critical for logistic regression convergence.
 
@@ -154,7 +153,7 @@ Features with different scales (points vs percentages) would dominate the gradie
 ## Data Quality Assurance
 
 ### Missing Value Handling
-**Functions:** `get_rolling_stats_for_week()`
+**Functions:** `Imputation`
 
 Early-season games (weeks 1-4) don't have enough prior games for 5-game rolling averages, which creates NaN values that would crash the machine learning algorithm. Imputation with league averages ensures every game has valid features.
 
@@ -190,7 +189,7 @@ Random train/test shuffling would overestimate performance. Since this is time-s
 - `betting_features_X.csv` - ML-ready feature matrix (1,408 × 76)
 - `betting_targets_y.csv` - Binary target variable (home team wins)
 - `complete_betting_dataset.csv` - Full dataset with all features and targets
-- `features_names.txt` - List of all 76 feature names
+- `feature_names.txt` - List of all 76 feature names
 
 ## Preprocessing Validation
 
@@ -200,7 +199,7 @@ The preprocessing pipeline includes several validation steps to ensure data qual
 
 - No missing values in final dataset
 - All features properly scaled
-- Target distribution: 57.2% home wins (realistic)
+- Target distribution: 53.8% home wins (realistic)
 - Feature correlation analysis completed
 - Chronological ordering maintained
 
@@ -223,24 +222,24 @@ This model was used as our baseline classifier for predicting whether the home t
 
 ## Logistic Regression Steps
 
-## 1: Data Preparation
-**Functions:** `pd.read_csv()`
+## 1. Data Preparation
+**Functions:** `pd.read_csv()`  
 Loads CSV files containing NFL game data. A total of 1,408 games with 76 features each (such as team statistics and rolling averages) and the actual results (home team winning or losing) make up the data.
 
-## 2: Model Initialization
+## 2. Model Initialization
 **Functions:** `__init__()`  
-Establishes the learning rules (how quickly to learn, when to stop, etc.) and builds a logistic regression model object. 
+Establishes the learning rules like how quickly to learn, when to stop, etc (learning rate: 0.1, max iterations: 1,000). 
 
-## 3: Start Training 
-**Functions:** `fit()`
+## 3. Start Training 
+**Functions:** `fit()`  
 Starts the training procedure. It creates 77 random coefficient guesses (one for each feature plus bias) after first adding a bias column to the data (such as a y-intercept). The starting points are these arbitrary numbers.
 
-## 4: Training Loop (347 Iterations)
+## 4. Training Loop (1000 Iterations)
 **Functions:** `for loop` inside `fit()`  
-Repeats the learning process 347 times. The model examines every game in each iteration, evaluates how inaccurate its predictions are, and modifies the coefficients to improve accuracy.
+Repeats the learning process 1000 times. The model examines every game in each iteration, evaluates how inaccurate its predictions are, and modifies the coefficients to improve accuracy.
 
 ### 4a: Calculate Cost Function
-**Functions:** `compute_cost()` 
+**Functions:** `compute_cost()`   
 Assesses the model's current performance. uses the current coefficients to make predictions on each of the 1,126 training games and calculates how much the predictions differ from reality.
 
 #### 4a.1: Apply Sigmoid Function
@@ -248,7 +247,7 @@ Assesses the model's current performance. uses the current coefficients to make 
 Creates probabilities between 0 and 1 from the raw mathematical computations.
 
 ### 4b: Compute Gradient
-**Functions:** `compute_gradient()`
+**Functions:** `compute_gradient()`  
 Determines the direction in which each coefficient should be adjusted. Determine whether and how much each of the 77 coefficients should rise or fall in order to enhance predictions.
 
 ### 4c: Weight Update
@@ -261,7 +260,7 @@ It checks to see if there is much less change in the coefficients. Stop training
 
 ## 5: Store Optimized Coefficients
 **Functions:** Assignment to `self.weights`  
-This process has produced 76 optimized coefficients after 347 rounds, such as `away_KC = 0.593`, which collectively predict NFL games with an accuracy of 64.9%. Based on five years of NFL data, these coefficients have "learned" what matters most for winning games.
+This process has produced 76 optimized coefficients after 1000 rounds, such as `away_KC = -0.593`, which collectively predict NFL games with an accuracy of 66.3%. Based on five years of NFL data, these coefficients have "learned" what matters most for winning games.
 
 ### Quantitative Metrics
 We evaluated the model using 3 key metrics:
@@ -275,14 +274,13 @@ We evaluated the model using 3 key metrics:
 - `feature_importance.csv` - Ranked coefficients showing which NFL stats matter most for predictions
 - `model_performance.csv` - Accuracy metrics and key performance indicators
 - `training_cost_history.csv` - Algorithm convergence data from gradient ascent
-- `features_names.txt` - List of all 76 feature names
 - `betting_simulation.csv` - ROI analysis for different confidence thresholds
 
 
 ## Results/Discussion
 
 ### Test Accuracy  
-- Achieved **64.5%**, which is significantly above the 52.4% break-even threshold for betting  
+- Achieved **66.3%**, which is significantly above the 52.4% break-even threshold for betting  
 - Home win rate baseline: 53.8%  
 - Indicates that the model captures meaningful structure in NFL outcomes
 
@@ -292,14 +290,14 @@ We evaluated the model using 3 key metrics:
 
 We simulated a betting strategy that places a bet only when the predicted win probability exceeded 60% (or was below 40% for away wins). Bets are $100 each, with +100 payout and -110 loss (standard sportsbook odds).
 
-- **Games Bet:** 162  
-- **Correct Bets:** 117  
-- **Incorrect Bets:** 45  
-- **Total Profit:** **$6,750.00**  
-- **Total Wagered:** $16,200.00  
-- **ROI:** **41.7%**
+- **Games Bet:** 173  
+- **Correct Bets:** 122  
+- **Incorrect Bets:** 51  
+- **Total Profit:** **$6,590.00**  
+- **Total Wagered:** $17,300.00  
+- **ROI:** **38.1%**
 
-Model confidence was highly predictive of betting success — the high-confidence bets had over 72.2% accuracy.
+Model confidence was highly predictive of betting success — the high-confidence bets had over 72.7% accuracy.
 
 ---
 
@@ -307,12 +305,12 @@ Model confidence was highly predictive of betting success — the high-confidenc
 
 To measure how well our predicted probabilities aligned with actual outcomes, we evaluated the Brier score.
 
-- **Brier Score:** **0.234**
+- **Brier Score:** **0.219**
 
 Interpretation:
 - A perfect model = 0.0  
 - A naive model (50/50 every time) = 0.25  
-- Our model = 0.234 → indicates a good level of predictive accuracy
+- Our model = 0.219 → indicates a good level of predictive accuracy
 
 ---
 
@@ -322,18 +320,20 @@ Interpretation:
 
 ![Cost Function Convergence](results/visualizations/cost_convergence_plot.png)
 
-- Gradient ascent converged smoothly within 1000 iterations
+- Gradient ascent trained for full 1000 iterations
 - Cost plot showed steady decline (no oscillation)
 
 #### Feature Importance
 
 ![Feature Importance](results/visualizations/feature_importance_top15.png)
 
-- Top features included:
-  - `home_point_diff`
-  - `rolling_win_advantage`
-  - `away_rolling_win_pct`
-  - `home_KC`, `away_BUF`  
+- Top 5 features included:
+  - `away_KC (-0.593, strongest predictor)`
+  - `home_ARI (-0.527)`
+  - `home_KC (+0.465)`
+  - `away_JAX (+0.351)`
+  - `home_GB (+0.346)`
+
 - Suggests both recent team form and team identity matter a significant amount
 
 #### Prediction Confidence and Profit Timeline
@@ -341,11 +341,12 @@ Interpretation:
 ![Prediction Analysis](results/visualizations/prediction_analysis.png)
 
 - Accuracy increased with confidence:
-  - Low confidence: ~55%  
-  - Medium confidence: ~60%  
-  - High confidence: **76%**
+  - Low confidence: ~59.6%  
+  - Medium confidence: ~61.2%  
+  - High confidence: **72.7%**
  
-- Net profit of $6,450 was earned over the 2024 test season
+- Net profit of $6,590 was earned over the 2024 test season (60% confidence threshold)
+- All games: $8,250 profit (but higher risk)
 - Profit grew steadily, indicating stable model performance over time
 
 #### ROI vs Confidence Threshold
@@ -353,7 +354,9 @@ Interpretation:
 ![ROI Analysis](results/visualizations/roi_analysis.png)
 
 - ROI peaked when betting only on games with model confidence ≥ 60%
-- Most profitable threshold range: **60–70%**
+- Most profitable threshold range: **65–70%**
+    - 65% threshold: 42.7% ROI ($5,640 profit on 132 games)
+    - 70% threshold: 46.3% ROI ($4,170 profit on 90 games)
 
 ---
 
