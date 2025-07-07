@@ -1,0 +1,8 @@
+metric,value
+train_acc,0.6758436944937833
+test_acc,0.6631205673758865
+total_games,282.0
+correct_preds,187.0
+home_win_rate,0.5383522727272727
+bias_term,0.15686233930678764
+iterations,1000.0
