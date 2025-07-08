@@ -376,13 +376,43 @@ Interpretation:
 | Dishi | Data preprocessing pipeline, feature engineering, and performance evaluation metrics |
 | Vivek | Model implementation (logistic regression) |
 
-#
-Gantt Chart
+## Gantt Chart
 
 ![image](https://github.gatech.edu/vbumb3/ml-sports-prediction/blob/main/Gantt_chart.png)
 
-#
-References:
+## Directory Structure  
+`/`: Root directory of the NFL betting prediction project  
+`/README.md`: Main project documentation with methodology, results, and analysis
+
+`/data/`: All datasets and processed data files  
+`/data/processed/`: Machine learning ready datasets  
+`/data/processed/betting_features_X.csv`: ML-ready feature matrix (1,408 × 76)  
+`/data/processed/betting_targets_y.csv`: Binary target variable (home team wins)  
+`/data/processed/complete_betting_dataset.csv`: Full dataset with all features and targets  
+`/data/processed/clean_nfl_games.csv`: Cleaned NFL game results with scores and metadata  
+`/data/processed/team_season_stats.csv`: Aggregated team performance by season  
+`/data/processed/feature_names.txt`: List of all 76 feature names  
+
+`/src/`: Source code for data processing and machine learning  
+`/src/simplified_nfl_data.py`: Data download and preprocessing pipeline  
+`/src/logistic_regression.py`: Logistic regression model implementation and training  
+
+`/results/`: All model outputs and analysis results  
+`/results/predictions/`: CSV files with model predictions and performance metrics  
+`/results/predictions/logistic_regression_predictions.csv`: All game predictions with probabilities and confidence levels  
+`/results/predictions/feature_importance.csv`: Ranked coefficients showing which NFL stats matter most for predictions  
+`/results/predictions/betting_simulation.csv`: ROI analysis for different confidence thresholds  
+`/results/predictions/model_performance.csv`: Accuracy metrics and key performance indicators  
+`/results/predictions/training_cost_history.csv`: Algorithm convergence data from gradient ascent  
+
+`/results/visualizations/`: Charts and plots for analysis  
+`/results/visualizations/cost_convergence_plot.png`: Training convergence visualization  
+`/results/visualizations/feature_importance_top15.png`: Top 15 most important features chart  
+`/results/visualizations/roi_analysis.png`: ROI analysis by confidence threshold  
+`/results/visualizations/prediction_analysis.png`: Prediction confidence and profit analysis  
+
+
+## References:
 
 [1] "Americans Torn About Sports Betting," Statista, 2021. [Online]. Available: https://www.statista.com/chart/26178/sports-betting-attitudes-us/
 
