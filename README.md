@@ -213,6 +213,11 @@ The preprocessing pipeline includes several validation steps to ensure data qual
 # Model Implementation/Evaluation - Logistic Regression
 Our approach consists of four primary phases: data acquisition, preprocessing, feature engineering, and model training. The following section will be discussing the training for our first model: logistic regression, implemented in `nfl_logistic_regression.py`.
 
+```bash
+# Run the data collection and preprocessing
+python nfl_logistic_regression.py
+```
+
 Justifications:
 - Provides interpretable coefficients
 - Outputs probability estimates that are useful for betting thresholds
