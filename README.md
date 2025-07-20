@@ -101,22 +101,26 @@ The script includes robust error handling for:
 
 The preprocessing transforms raw NFL game data into ML ready features through statistical aggregation, feature engineering, and standardization. This follows the methodology outlined in our research proposal for optimal predictive performance.
 
-## Preprocessing Steps
-
 ### 1. Data Cleaning & Validation
 **Functions:** `.dropna()`, `.astype()`
 
-Raw NFL data contains incomplete games with missing essential information that would cause errors in downstream calculations. After cleaning, 1,408 complete games remained for analysis. Machine learning algorithms also require numerical targets (0/1) rather than categorical outcomes.
+Raw NFL data contains incomplete games with missing scores due to postponements or data collection issues. We filtered these using `.dropna()` which removed games without complete scoring information, retaining 1,408 complete games from 2020-2024 seasons.
+We also converted game outcomes to binary targets using `.astype(int)`, creating home team win/loss indicators (1/0) required for logistic regression. This ensures our dataset contains only valid, complete games with clear outcomes for reliable model training.
+
 
 ### 2. Season-Level Team Statistics
 **Functions:** `.groupby()`, `.agg()`, `.reset_index()`
 
-Season averages establish each team's baseline strength and overall quality. It provides essential context for predicting individual game matchups.
+Season averages establish each team's baseline offensive and defensive capabilities. We aggregated weekly team performance using  `.groupby(['season', team_col])` to calculate mean passing and rushing yards for each team per season. This provides fundamental team strength metrics that capture overall quality and playing style.
+The `.agg()` function computes season-long averages while `.reset_index()` restructures the data for easy merging with game-level features. These season statistics serve as the foundation for comparing team strengths in individual matchups.
+
 
 ### 3. Rolling Performance Metrics
 **Functions:** `.iloc()`, `.mean()`
 
-Recent team performance (momentum / form) is more predictive than season-long averages for sports outcomes.
+Recent team performance captures momentum and current form, which is more predictive than season-long averages for sports outcomes. We calculated 5-game rolling windows for each team using `.iloc()` to select the last five games and `.mean()` to compute averages for win percentage, points scored, and point differential.
+Critical to data integrity, rolling statistics only use games before the prediction target, preventing future information leakage. Early season games with fewer than 5 prior games use all available games to ensure complete coverage.
+
 
 **Rolling Features Created:**
 - `home_rolling_win_pct` / `away_rolling_win_pct`
@@ -125,17 +129,23 @@ Recent team performance (momentum / form) is more predictive than season-long av
 
 ### 4. Matchup-Level Feature Engineering
 **Functions:** `Calculations`  
-Football outcomes depend more on relative matchups than absolute team strength. A good offense vs weak defense creates different dynamics than good offense vs strong defense.
+Football outcomes depend on relative team strengths rather than absolute performance. We created direct comparison features like `yards_advantage` (home team total yards - away team total yards), `rolling_win_advantage` (home rolling win % - away rolling win %), and `rolling_point_diff_advantage` (home recent point differential - away recent point differential).
+These head-to-head features capture competitive dynamics between specific opponents, providing the model with relative performance metrics that directly predict game outcomes.
+
 
 ### 5. One-Hot Team Encoding
 **Functions:** `pd.get_dummies()`, `pd.concat()`
 
-Machine learning algorithms require numerical inputs and cannot process categorical text data like team names (e.g., "Chargers", "Dolphins").
+Machine learning algorithms require numerical inputs and cannot process categorical team names like "Chiefs" or "Patriots". We used `pd.get_dummies()` to create binary indicator variables for each of the 32 NFL teams, generating separate columns for home and away team identity (e.g., home_KC, away_NE).
+This encoding allows the model to learn team-specific patterns and home field advantages while maintaining the numerical format required for logistic regression training.
+
 
 ### 6. Feature Standardization
 **Functions:** `.mean()`, `.std()`
 
-Features with different scales (points vs percentages) would dominate the gradient descent optimization and prevent the algorithm from learning properly. This is also critical for logistic regression convergence.
+Features with different scales (points vs percentages) would dominate gradient descent optimization and prevent proper algorithm convergence. We standardized all numerical features using the formula (value - mean) / standard_deviation, ensuring each feature has mean ≈ 0 and standard deviation ≈ 1.
+This scaling gives equal importance to all features during logistic regression training, preventing large-scale metrics from overshadowing smaller but potentially more predictive variables.
+
 
 ## Feature Categories Created
 
@@ -150,25 +160,8 @@ Features with different scales (points vs percentages) would dominate the gradie
 - **Home Teams:** `home_ARI`, `home_ATL`, `home_BAL`, ..., `home_WAS` (32 features)
 - **Away Teams:** `away_ARI`, `away_ATL`, `away_BAL`, ..., `away_WAS` (32 features)
 
-## Data Quality Assurance
-
-### Missing Value Handling
-**Functions:** `Imputation`
-
-Early-season games (weeks 1-4) don't have enough prior games for 5-game rolling averages, which creates NaN values that would crash the machine learning algorithm. Imputation with league averages ensures every game has valid features.
-
-### Data Leakage Prevention
-**Functions:** `.loc[]`
-
-Can't use future game results to predict past games. Otherwise, the model will look artificially good during training and probably fail in real betting scenarios.
-
-### Chronological Validation
-**Functions:** `sort_values()`
-
-Random train/test shuffling would overestimate performance. Since this is time-series data, chronological validation ensures the model can predict future outcomes using only past data, which is exactly what sports betting requires.
-
 ## Output Specifications
-
+Our preprocessing pipeline transforms raw NFL game data into a machine learning-ready dataset optimized for binary classification. The final dataset contains 1,408 NFL games with 76 engineered features capturing team performance and matchup dynamics.
 ### Final Dataset Dimensions
 
 - **Samples:** 1,408 NFL games (2020-2024)
@@ -178,10 +171,12 @@ Random train/test shuffling would overestimate performance. Since this is time-s
 - **Target:** Binary home team victory (0/1)
 
 ### Feature Scaling Results
-
+Standardization ensures equal feature contribution during logistic regression training.
 - **Numerical features:** Mean ≈ 0, Standard deviation ≈ 1
 - **Binary features:** Values in {0, 1}
 - **No missing values:** Complete dataset ready for ML
+
+This setup allows the model to fairly compare all features and clearly show which NFL statistics are most important for predicting wins.
 
 ## Output Files Generated by simplified_nfl_data.py
 
@@ -191,81 +186,67 @@ Random train/test shuffling would overestimate performance. Since this is time-s
 - `complete_betting_dataset.csv` - Full dataset with all features and targets
 - `feature_names.txt` - List of all 76 feature names
 
-## Preprocessing Validation
-
-### Data Integrity Checks
-
-The preprocessing pipeline includes several validation steps to ensure data quality:
-
-- No missing values in final dataset
-- All features properly scaled
-- Target distribution: 53.8% home wins (realistic)
-- Feature correlation analysis completed
-- Chronological ordering maintained
-
-### Preprocessing Runtime
-
-- **Execution time:** ~30-60 seconds on standard hardware
-- **Memory usage:** <500MB peak
-
-
 
 # Model Implementation/Evaluation - Logistic Regression
 Our approach consists of four primary phases: data acquisition, preprocessing, feature engineering, and model training. The following section will be discussing the training for our first model: logistic regression, implemented in `nfl_logistic_regression.py`.
 
 ```bash
-# Run the data collection and preprocessing
+# Run the logistic regression algorithm
 python nfl_logistic_regression.py
 ```
 
-Justifications:
-- Provides interpretable coefficients
-- Outputs probability estimates that are useful for betting thresholds
-- Fast to train and thus ideal for initial benchmarking
+**Justifications:** We chose logistic regression as our baseline model because it's easy to understand and gives probability outputs needed for betting decisions. The algorithm shows clear coefficient weights that tell us which NFL statistics are most important for predicting wins.
+Key advantages for our project:
+-	Clear coefficients show which features matter most
+-	Probability outputs help decide betting confidence levels
+-	Fast training allows quick updates with new game data
+-	Baseline performance gives us a starting point to compare other models  
 
-This model was used as our baseline classifier for predicting whether the home team would win and was trained using **chronologically split** data to avoid data leakage. As referenced in our preprocessing section (split_idx), the first 80% of games were used for training and the final 20% were used for testing. This mimics a real-world betting environment where predictions are made on future games using only past data.
+We split the data chronologically - first 80% of games (1,126) for training and last 20% (282) for testing. This prevents data leakage and mimics real betting where we predict future games using only past data.
+
 
 ## Logistic Regression Steps
 
 ## 1. Data Preparation
 **Functions:** `pd.read_csv()`  
-Loads CSV files containing NFL game data. A total of 1,408 games with 76 features each (such as team statistics and rolling averages) and the actual results (home team winning or losing) make up the data.
+Loads our preprocessed NFL dataset containing 1,408 games with 76 features and binary home win targets. The data is already cleaned and standardized from our preprocessing pipeline.
 
 ## 2. Model Initialization
 **Functions:** `__init__()`  
-Establishes the learning rules like how quickly to learn, when to stop, etc (learning rate: 0.1, max iterations: 1,000). 
+Sets up the logistic regression model with learning parameters: learning rate (0.1), maximum iterations (1,000), and convergence tolerance. These control how fast the model learns and when to stop training.
 
 ## 3. Start Training 
 **Functions:** `fit()`  
-Starts the training procedure. It creates 77 random coefficient guesses (one for each feature plus bias) after first adding a bias column to the data (such as a y-intercept). The starting points are these arbitrary numbers.
+Begins the training process by adding a bias term and initializing 77 random weights (one for each feature plus bias). The model starts with random guesses for all coefficients.
 
 ## 4. Training Loop (1000 Iterations)
 **Functions:** `for loop` inside `fit()`  
-Repeats the learning process 1000 times. The model examines every game in each iteration, evaluates how inaccurate its predictions are, and modifies the coefficients to improve accuracy.
+Repeats the learning process up to 1,000 times. In each iteration, the model makes predictions on all training games and adjusts weights to reduce prediction errors.
 
 ### 4a: Calculate Cost Function
 **Functions:** `compute_cost()`   
-Assesses the model's current performance. uses the current coefficients to make predictions on each of the 1,126 training games and calculates how much the predictions differ from reality.
+Measures how wrong the current predictions are by comparing them to actual game results across all 1,126 training games.
 
 #### 4a.1: Apply Sigmoid Function
 **Functions:** `sigmoid()`  
-Creates probabilities between 0 and 1 from the raw mathematical computations.
+Converts raw mathematical calculations into probabilities between 0 and 1, representing the chance of home team victory.
 
 ### 4b: Compute Gradient
 **Functions:** `compute_gradient()`  
-Determines the direction in which each coefficient should be adjusted. Determine whether and how much each of the 77 coefficients should rise or fall in order to enhance predictions.
+Determines which direction to adjust each of the 77 coefficients to improve predictions.
 
 ### 4c: Weight Update
-**Functions:** Direct assignment with `+`, `*` operators  
-Modifies the coefficients in accordance with the gradient function's recommendations. Make a tiny adjustment to each coefficient to increase accuracy.
+**Functions:** Direct assignment with `+`, `*` operators
+Updates all coefficients based on gradient recommendations, making small improvements to prediction accuracy.
 
 ### 4d: Check Convergence
 **Functions:** `np.linalg.norm()`  
-It checks to see if there is much less change in the coefficients. Stop training if they are stable (convergent). If not, return and use the new coefficients to repeat the loop.
+Checks if coefficient changes are very small, indicating the model has learned as much as possible and training can stop.
 
 ## 5: Store Optimized Coefficients
 **Functions:** Assignment to `self.weights`  
-This process has produced 76 optimized coefficients after 1000 rounds, such as `away_KC = -0.593`, which collectively predict NFL games with an accuracy of 66.3%. Based on five years of NFL data, these coefficients have "learned" what matters most for winning games.
+Assignment to self.weights
+After training completes, saves the final 77 optimized coefficients that predict NFL games with 66.3% accuracy.
 
 ### Quantitative Metrics
 We evaluated the model using 3 key metrics:
@@ -434,5 +415,9 @@ Interpretation:
 [7] Steyerberg, E. W., Vickers, A. J., Cook, N. R., Gerds, T., Gonen, M., Obuchowski, N., Pencina, M. J., & Kattan, M. W. (2010). Assessing the performance of prediction models. Epidemiology, 21(1), 128–138. https://doi.org/10.1097/ede.0b013e3181c30fb2
 
 [8] R. M. Galekwa et al., "A Systematic Review of Machine Learning in Sports Betting: Techniques, Challenges, and Future Directions," arXiv preprint arXiv:2410.21484, 2024.
+
+
+
+
 
 
