@@ -1,7 +1,3 @@
-# nfl_random_forest.py
-# NFL Random Forest Implementation
-# Team: Eshaan, Thavaisya, Dishi, Vivek
-
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
