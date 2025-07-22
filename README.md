@@ -757,11 +757,9 @@ These models offer significant practical value by providing a data-driven altern
     └── visualizations/                          # Charts and plots for analysis (13 total)
         ├── cost_convergence_plot.png            # Training convergence visualization
         ├── feature_importance_top15.png         # Top 15 most important features chart
-        ├── model_comparison_dashboard.png       # 3-panel model comparison chart
         ├── prediction_analysis.png              # Prediction confidence and profit analysis
         ├── rf_feature_analysis.png              # Random Forest feature category breakdown
         ├── rf_feature_importance.png            # Random Forest feature importance rankings
-        ├── rf_model_comparison.png              # Random Forest model comparison
         ├── rf_prediction_analysis.png           # Random Forest prediction confidence analysis
         ├── rf_roi_analysis.png                  # Random Forest ROI performance analysis
         ├── roi_analysis.png                     # ROI analysis by confidence threshold
