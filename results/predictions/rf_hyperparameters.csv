@@ -1,0 +1,5 @@
+parameter,best_value
+max_depth,10
+max_features,log2
+min_samples_split,15
+n_estimators,300

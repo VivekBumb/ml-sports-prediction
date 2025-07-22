@@ -1,0 +1,8 @@
+metric,value
+train_accuracy,0.7664298401420959
+test_accuracy,0.6843971631205674
+total_games,282.0
+correct_predictions,193.0
+best_roi,45.21739130434783
+best_threshold,0.7
+feature_count,76.0
