@@ -354,7 +354,7 @@ python nfl_random_forest.py
 
 **Justifications:** We chose Random Forest to capture nonlinear patterns and feature interactions that might exist in NFL game data. Random Forest works by training many decision trees and having them vote together on predictions.
 
-Key advantages for our project include the ability to find patterns between features, such as when a strong offense faces a weak defense. The model improves prediction reliability by aggregating votes from 300 trees instead of relying on a single model. It also reveals which NFL statistics work best together for predicting game outcomes and provides confidence scores to help decide which games to bet on. Additionally, the approach performs well with both season-long statistics and recent team performance data.
+Key advantages for our project include the ability to find patterns between features, such as when a strong offense faces a weak defense. The model improves prediction reliability by aggregating votes from 200 trees instead of relying on a single model. It also reveals which NFL statistics work best together for predicting game outcomes and provides confidence scores to help decide which games to bet on. Additionally, the approach performs well with both season-long statistics and recent team performance data.
 
 
 We used chronological data split - first 80% of games (1,126) for training and last 20% (282) for testing to prevent data leakage.
@@ -367,11 +367,11 @@ Loads preprocessed NFL dataset: 1,408 games with 76 features. The data is alread
 
 #### 2. Model Initialization
 **Functions:** `RandomForestClassifier()`  
-Sets up the Random Forest model with ensemble parameters: 300 trees, log₂(76) ≈ 6 features per split, max depth 10, and bootstrap sampling enabled. These control the ensemble size and tree complexity.
+Sets up the Random Forest model with ensemble parameters: 200 trees, sqrt(76)≈9 features per split, max depth 10, and bootstrap sampling enabled. These control the ensemble size and tree complexity.
 
 #### 3. Start Training
 **Functions:** `fit()`  
-Begins the training process by creating 300 decision trees, each trained on different bootstrap samples of the training data with random feature selection at each split.
+Begins the training process by creating 200 decision trees, each trained on different bootstrap samples of the training data with random feature selection at each split.
 
 #### 4. Training Process (Bootstrap Aggregating)
 **Functions:** Ensemble training loop  
@@ -383,11 +383,12 @@ Bootstrap Aggregating (Bagging):
 
 ##### 4a: Bootstrap Sampling
 **Functions:** Internal bootstrap sampling  
-Each of the 300 trees trains on a different random sample of the 1,126 training games, drawn with replacement.
+Each of the 200 trees trains on a different random sample of the 1,126 training games, drawn with replacement.
 
-##### 4b: Random Feature Selection
-**Functions:** `max_features='log2'`  
-At each split, randomly selects log₂(76) ≈ 6 features from the 76 NFL statistics to prevent overfitting and increase diversity.
+#### 4b: Random Feature Selection
+**Functions:** `max_features='sqrt'`
+At each split, randomly selects √76 ≈ 9 features from the 76 NFL statistics to prevent overfitting and increase diversity.
+
 
 ##### 4c: Tree Construction
 **Functions:** Decision tree building  
@@ -395,11 +396,11 @@ Builds decision rules using features like `rolling_win_advantage`, `home_rolling
 
 ##### 4d: Ensemble Voting
 **Functions:** `predict()`, `predict_proba()`  
-Combines all 300 tree predictions using majority voting for classification and averaging for probability estimates.
+Combines all 200 tree predictions using majority voting for classification and averaging for probability estimates.
 
 #### 5: Store Trained Ensemble
 **Functions:** Model storage  
-After training completes, saves the ensemble of 300 optimized trees that predict NFL games with 68.4% accuracy.
+After training completes, saves the ensemble of 200 optimized trees that predict NFL games with 68.4% accuracy.
 
 ### Quantitative Metrics
 
@@ -507,10 +508,10 @@ Return on Investment (ROI) increases as model confidence grows, rising from 34.4
 
 #### Hyperparameter Optimization
 
-The best-performing Random Forest model used **300 trees**, with the maximum number of features per split set to **log2**, or approximately 6 features. The **maximum tree depth** was limited to 10 to control overfitting, and each split required a **minimum of 15 samples**. Hyperparameters were optimized using **TimeSeriesSplit** cross-validation to respect the chronological nature of the NFL data.
+The best-performing Random Forest model used **200 trees**, with the maximum number of features per split set to **√76**, or approximately 9 features. The **maximum tree depth** was limited to 10 to control overfitting, and each split required a **minimum of 15 samples**. Hyperparameters were optimized using **TimeSeriesSplit** cross-validation to respect the chronological nature of the NFL data.
 
 
-**Optimal Configuration:** 300-tree ensemble with log2 feature selection effectively captures complex NFL patterns without overfitting.
+**Optimal Configuration:** 200-tree ensemble with √76 ≈ 9 feature selection effectively captures complex NFL patterns without overfitting.
 
 ### Team Contributions
 
