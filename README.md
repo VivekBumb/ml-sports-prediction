@@ -712,10 +712,6 @@ The analysis of feature importance reveals distinct patterns across different mo
 **3. Model Complementarity**
 The three models demonstrate complementary strengths that make each valuable for different aspects of sports prediction. Random Forest excels in overall predictive accuracy, achieving the highest success rate at 68.4%, making it ideal for scenarios where pure prediction accuracy is the primary concern. SVM distinguishes itself through superior betting profitability, delivering an exceptional 51.8% return on investment
 
-### Business Impact
-
-**Profitability Analysis:**
-The profitability analysis demonstrates the substantial advantage our models provide over traditional betting approaches. While conventional betting strategies require a break-even accuracy threshold of 52.4%, our developed models significantly surpass this benchmark, achieving accuracy rates ranging from 64.5% to 68.4%. This superior predictive performance translates into impressive financial returns, with return on investment spanning from 41.7% to 51.8% across all three models. The implementation of confidence thresholds
 
 **Practical Applications:**
 These models offer significant practical value by providing a data-driven alternative to traditional perception-based betting lines that often rely on subjective analysis and market sentiment. The approach emphasizes objective statistical analysis that cuts through the noise of social media trends and popular opinion, focusing instead on quantifiable patterns and historical performance metrics. Most importantly, the framework establishes a disciplined approach to sports betting that incorporates clear risk management protocols, enabling users to make informed decisions based on statistical evidence rathe
