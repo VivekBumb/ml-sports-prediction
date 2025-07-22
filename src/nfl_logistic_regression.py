@@ -133,7 +133,7 @@ class LogisticRegression:
 
 
 
-#### Print result and performance ####
+#Print result and performance
 
 # load the data
 print("loading NFL betting data...")
