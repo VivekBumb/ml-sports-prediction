@@ -698,7 +698,7 @@ Out of 1,126 training games, **894 support vectors** were identified, representi
 
 ### Winner: Support Vector Machine
 > **Why SVM Won:**
-> The Support Vector Machine emerged as the clear winner due to its exceptional profitability, delivering the highest return on investment at 51.8%, which makes it the most suitable model for practical betting applications. Its performance particularly excels in high-confidence scenarios, achieving an impressive 77% accuracy when operating at the 70% confidence threshold. This superior selective betting capability demonstrates optimal risk management, as the model performs best when making carefully chosen predictions rather than betting on every opportunity. Additionally, SVM's strong theoretical foundation, built on maximum margin optimization principles, provides a robust decision boundary that contributes to its consistent and reliable performance across different market conditions.
+> Support Vector Machine was the clear winner due to its exceptional profitability, recording the best return on investment of 51.8%, which made it the best model for practical application to betting. Its performance is exceptional in high-confidence instances, where it achieves an impressive 77% accuracy when it is at the 70% confidence level. This improved selective betting capability reflects better risk management, with the model performing optimally when it makes well-informed bets instead of betting for every event. SVM's strong theoretical foundation, based on maximum margin optimization, provides it with a good decision boundary, which results in its consistent and predictable performance in different market environments.
 
 ### Key Project Insights
 
@@ -713,7 +713,7 @@ The three models demonstrate complementary strengths that make each valuable for
 
 
 **Practical Applications:**
-These models offer significant practical value by providing a data-driven alternative to traditional perception-based betting lines that often rely on subjective analysis and market sentiment. The approach emphasizes objective statistical analysis that cuts through the noise of social media trends and popular opinion, focusing instead on quantifiable patterns and historical performance metrics. Most importantly, the framework establishes a disciplined approach to sports betting that incorporates clear risk management protocols, enabling users to make informed decisions based on statistical evidence rathe
+These models have immense practical value because they act as data-based substitutes for traditional perception-driven gambling lines typically driven by qualitative analysis and sentiment of the market. The method places greater stock in objective statistical analysis that shies away from the tweet-driven vision of popular social media and prevailing popular opinion and instead highlights quantifiable trends and historical performance figures. Most importantly, the system has a disciplined sports betting plan that incorporates good risk management practices, enabling individuals to make well-informed bets using statistical information rather than social media.
 
 ---
 
