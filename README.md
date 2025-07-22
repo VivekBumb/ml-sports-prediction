@@ -1,7 +1,6 @@
 <div align="center">
 
 # NFL Betting Prediction System
-### Machine Learning Models for Sports Betting Analytics
 
 [![Machine Learning](https://img.shields.io/badge/ML-Logistic%20Regression%20%7C%20Random%20Forest%20%7C%20SVM-green.svg)](https://scikit-learn.org)
 
