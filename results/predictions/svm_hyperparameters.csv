@@ -1,0 +1,4 @@
+parameter,best_value
+C,0.1
+gamma,scale
+kernel,linear

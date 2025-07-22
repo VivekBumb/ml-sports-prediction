@@ -1,0 +1,4 @@
+Model,Test_Accuracy,Best_ROI,Key_Strength,Complexity
+Logistic Regression,0.645,41.7,Interpretable,Low
+Random Forest,0.684,45.2,Feature interactions,Medium
+SVM,0.6524822695035462,51.80327868852459,Maximum margin,Medium
