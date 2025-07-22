@@ -872,42 +872,27 @@ Out of 1,126 training games, **894 support vectors** were identified, representi
 </div>
 
 ### Winner: Support Vector Machine
-
 > **Why SVM Won:**
-> - **Highest ROI (51.8%)** makes it most profitable for betting applications
-> - **Best High-Confidence Performance:** 77% accuracy at 70% threshold
-> - **Optimal Risk Management:** Superior performance when betting selectively
-> - **Strong Theoretical Foundation:** Maximum margin optimization provides robust decision boundary
+> The Support Vector Machine emerged as the clear winner due to its exceptional profitability, delivering the highest return on investment at 51.8%, which makes it the most suitable model for practical betting applications. Its performance particularly excels in high-confidence scenarios, achieving an impressive 77% accuracy when operating at the 70% confidence threshold. This superior selective betting capability demonstrates optimal risk management, as the model performs best when making carefully chosen predictions rather than betting on every opportunity. Additionally, SVM's strong theoretical foundation, built on maximum margin optimization principles, provides a robust decision boundary that contributes to its consistent and reliable performance across different market conditions.
 
 ### Key Project Insights
 
 **1. Selective Betting Strategy**
-- All models perform significantly better with confidence-based betting
-- Higher confidence thresholds reduce volume but maximize profitability
-- SVM's 70% threshold strategy: 61 games, 77% accuracy, 51.8% ROI
+All models demonstrate significantly improved performance when employing confidence-based betting strategies. While higher confidence thresholds naturally reduce the overall volume of bets placed, they consistently maximize profitability across all tested models. SVM's implementation of a 70% confidence threshold strategy proves particularly effective, resulting in a focused approach that selects 61 carefully chosen games and achieves an impressive 77% accuracy rate with a substantial 51.8% return on investment.
 
 **2. Feature Importance Patterns**
-- **Logistic Regression:** Team identity features dominate
-- **Random Forest:** Matchup and momentum features most important
-- **SVM:** Linear separability suggests simpler patterns than expected
+The analysis of feature importance reveals distinct patterns across different modeling approaches. Logistic Regression demonstrates a strong reliance on team identity features, suggesting that historical team characteristics play a dominant role in its predictive framework. In contrast, Random Forest identifies matchup dynamics and momentum indicators as the most critical factors, emphasizing the importance of recent performance trends and head-to-he
 
 **3. Model Complementarity**
-- **Random Forest:** Best overall accuracy (68.4%)
-- **SVM:** Best betting profitability (51.8% ROI)
-- **Logistic Regression:** Best interpretability and baseline performance
+The three models demonstrate complementary strengths that make each valuable for different aspects of sports prediction. Random Forest excels in overall predictive accuracy, achieving the highest success rate at 68.4%, making it ideal for scenarios where pure prediction accuracy is the primary concern. SVM distinguishes itself through superior betting profitability, delivering an exceptional 51.8% return on investment
 
 ### Business Impact
 
 **Profitability Analysis:**
-- Traditional betting break-even: 52.4% accuracy needed
-- Our models: 64.5% - 68.4% accuracy achieved
-- ROI range: 41.7% - 51.8% across all models
-- Risk management through confidence thresholds
+The profitability analysis demonstrates the substantial advantage our models provide over traditional betting approaches. While conventional betting strategies require a break-even accuracy threshold of 52.4%, our developed models significantly surpass this benchmark, achieving accuracy rates ranging from 64.5% to 68.4%. This superior predictive performance translates into impressive financial returns, with return on investment spanning from 41.7% to 51.8% across all three models. The implementation of confidence thresholds
 
 **Practical Applications:**
-- Data-driven alternative to perception-based betting lines
-- Objective statistical analysis over social media trends
-- Disciplined approach to sports betting with clear risk management
+These models offer significant practical value by providing a data-driven alternative to traditional perception-based betting lines that often rely on subjective analysis and market sentiment. The approach emphasizes objective statistical analysis that cuts through the noise of social media trends and popular opinion, focusing instead on quantifiable patterns and historical performance metrics. Most importantly, the framework establishes a disciplined approach to sports betting that incorporates clear risk management protocols, enabling users to make informed decisions based on statistical evidence rathe
 
 ---
 
