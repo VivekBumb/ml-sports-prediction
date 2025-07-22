@@ -367,7 +367,7 @@ Loads preprocessed NFL dataset: 1,408 games with 76 features. The data is alread
 
 #### 2. Model Initialization
 **Functions:** `RandomForestClassifier()`  
-Sets up the Random Forest model with ensemble parameters: 200 trees, sqrt(76)≈9 features per split, max depth 10, and bootstrap sampling enabled. These control the ensemble size and tree complexity.
+Sets up the Random Forest model with ensemble parameters: 200 trees, sqrt(76)≈9 features per split, max depth 10
 
 #### 3. Start Training
 **Functions:** `fit()`  
@@ -505,13 +505,6 @@ Shows recent team form and matchup analysis are far more important than team rep
 **ROI Performance:**  
 Return on Investment (ROI) increases as model confidence grows, rising from 34.4% at lower thresholds to 45.2% at higher ones. A risk vs. reward analysis suggests that the most effective betting strategy occurs at higher confidence levels, where predictions are more reliable. Although higher confidence results in fewer games being selected, those games yield more profitable outcomes overall.
 
-
-#### Hyperparameter Optimization
-
-The best-performing Random Forest model used **200 trees**, with the maximum number of features per split set to **√76**, or approximately 9 features. The **maximum tree depth** was limited to 10 to control overfitting, and each split required a **minimum of 15 samples**. Hyperparameters were optimized using **TimeSeriesSplit** cross-validation to respect the chronological nature of the NFL data.
-
-
-**Optimal Configuration:** 200-tree ensemble with √76 ≈ 9 feature selection effectively captures complex NFL patterns without overfitting.
 
 ### Team Contributions
 
@@ -747,7 +740,6 @@ These models have immense practical value because they act as data-based substit
     │   ├── training_cost_history.csv            # Algorithm convergence data from gradient ascent
     │   ├── rf_betting_simulation.csv            # Random Forest betting simulation results
     │   ├── rf_feature_importance.csv            # Random Forest feature importance rankings
-    │   ├── rf_hyperparameters.csv               # Random Forest optimal hyperparameters
     │   ├── rf_performance_metrics.csv           # Random Forest performance analysis
     │   ├── rf_predictions.csv                   # Random Forest predictions
     │   ├── model_comparison_final.csv           # Cross-model comparison results
