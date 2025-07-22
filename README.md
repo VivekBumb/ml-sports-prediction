@@ -359,129 +359,190 @@ Interpretation:
 
 # Model Implementation/Evaluation - Random Forest
 
-Following our successful logistic regression baseline, we implemented Random Forest as our second model to capture nonlinear patterns in NFL game outcomes. This section discusses the training for our Random Forest model, implemented in `nfl_random_forest.py`.
+We implemented Random Forest as our second model to capture nonlinear patterns in NFL game outcomes. This section discusses the training for our Random Forest model, implemented in `nfl_random_forest.py`.
 
 ```bash
 # Run the Random Forest algorithm
 python nfl_random_forest.py
 ```
 
-**Justifications:** We chose Random Forest as the second model to capture nonlinear patterns and feature interactions that might exist in NFL game data. Random Forest works by training many decision trees and having them vote together on predictions.
+**Justifications:** We chose Random Forest to capture nonlinear patterns and feature interactions that might exist in NFL game data. Random Forest works by training many decision trees and having them vote together on predictions.
 
-Key advantages for this NFL project:
+Key advantages for our project:
 - Can find patterns between features (like when good offense meets weak defense)
 - Gets more reliable predictions by having 300 trees vote instead of just one model
 - Shows us which NFL stats work best together for predicting games
 - Gives us confidence scores for deciding which games to bet on
 - Works well with both season-long stats and recent team performance data
 
-We used the same chronological data split as logistic regression - first 80% of games (1,126) for training and last 20% (282) for testing. This ensures fair comparison between models.
+We used chronological data split - first 80% of games (1,126) for training and last 20% (282) for testing to prevent data leakage.
 
-## Random Forest Implementation Steps
+## Random Forest Steps
 
 ### 1. Data Preparation
 **Functions:** `pd.read_csv()`  
-Loads the same preprocessed NFL dataset used for logistic regression: 1,408 games with 76 features. This ensures fair comparison between our models since they train on identical data.
+Loads preprocessed NFL dataset: 1,408 games with 76 features. The data is already cleaned and standardized from our preprocessing pipeline.
 
-### 2. Model Configuration  
+### 2. Model Initialization
 **Functions:** `RandomForestClassifier()`  
-Configures the Random Forest model specifically for the NFL dataset:
-- **300 trees (n_estimators)**: Creates ensemble for voting on 282 test games
-- **log₂(76) ≈ 6 features per split (max_features='log2')**: Randomly selects from NFL features at each split
-- **Bootstrap sampling enabled**: Each tree trains on different subsets of 1,126 training games
-- **Max depth 10**: Controls complexity to prevent memorizing specific NFL game patterns
+Sets up the Random Forest model with ensemble parameters: 300 trees, log₂(76) ≈ 6 features per split, max depth 10, and bootstrap sampling enabled. These control the ensemble size and tree complexity.
 
-### 3. Training Process
+### 3. Start Training
 **Functions:** `fit()`  
-Trains the ensemble on NFL training data. The implementation:
-1. Creates 300 decision trees using 1,126 training games
-2. Each tree randomly samples from NFL games (with replacement)
-3. At each split, randomly selects 6 features from 76 NFL statistics (log₂(76) ≈ 6)
-4. Builds decision rules using features like `rolling_win_advantage`, `home_rolling_points`, team encodings
-5. Each tree learns different patterns from the preprocessed NFL data
+Begins the training process by creating 300 decision trees, each trained on different bootstrap samples of the training data with random feature selection at each split.
 
-### 4. Ensemble Prediction
+### 4. Training Process (Bootstrap Aggregating)
+**Functions:** Ensemble training loop  
+Following CS 4641 class notes on Bootstrap Aggregating (Bagging):
+1. Pick sample S* with replacement of size n
+2. Train decision tree on each S*
+3. Repeat B times to get f1, f2, ..., fB  
+4. Final classifier f(x) = majority{fb(x)}
+
+#### 4a: Bootstrap Sampling
+**Functions:** Internal bootstrap sampling  
+Each of the 300 trees trains on a different random sample of the 1,126 training games, drawn with replacement.
+
+#### 4b: Random Feature Selection
+**Functions:** `max_features='log2'`  
+At each split, randomly selects log₂(76) ≈ 6 features from the 76 NFL statistics to prevent overfitting and increase diversity.
+
+#### 4c: Tree Construction
+**Functions:** Decision tree building  
+Builds decision rules using features like `rolling_win_advantage`, `home_rolling_points`, and team encodings to create individual predictors.
+
+#### 4d: Ensemble Voting
 **Functions:** `predict()`, `predict_proba()`  
-Makes predictions on 282 test games using ensemble voting:
-- **Classification**: All 300 trees vote on each NFL game outcome (home win/loss)
-- **Probability**: Averages all tree probabilities to get confidence for betting decisions
-- **Implementation**: For each test game, combines predictions from all trees trained on NFL data
-- **Output**: Generates probabilities for the betting simulation strategy
+Combines all 300 tree predictions using majority voting for classification and averaging for probability estimates.
 
-### 5. Hyperparameter Optimization
-**Functions:** `GridSearchCV()`, `TimeSeriesSplit()`  
-Optimizes model parameters using the NFL dataset:
-- **Number of trees**: Tests 100, 200, 300 trees on training data
-- **Features per split**: Experiments with different numbers of the 76 NFL features  
-- **Tree complexity**: Adjusts max_depth for specific data patterns
-- **Cross-validation**: Uses chronological splits on 2020-2024 NFL games (not random splits)
-- **Goal**: Find best configuration for predicting 282 test games
+### 5: Store Trained Ensemble
+**Functions:** Model storage  
+After training completes, saves the ensemble of 300 optimized trees that predict NFL games with 68.4% accuracy.
+
+## Quantitative Metrics
+We evaluated the model using 3 key metrics:
+- **Accuracy**: Proportion of correctly predicted outcomes
+- **Return on Investment (ROI)**: Simulated betting performance using confidence thresholds
+- **Brier Score**: Level of predictive accuracy
 
 ## Output Files Generated by nfl_random_forest.py
 
 - `rf_predictions.csv` - All game predictions with probabilities and confidence levels
-- `rf_feature_importance.csv` - Feature rankings from ensemble voting
-- `rf_betting_simulation.csv` - ROI analysis for different confidence thresholds  
-- `rf_performance_metrics.csv` - Model accuracy and performance summary
-- `rf_hyperparameters.csv` - Best parameter settings found
-- `rf_feature_importance.png` - Visualization of top important features
+- `rf_feature_importance.csv` - Feature rankings from ensemble voting showing which NFL stats matter most
+- `rf_performance_metrics.csv` - Accuracy metrics and key performance indicators
+- `rf_betting_simulation.csv` - ROI analysis for different confidence thresholds
+- `rf_hyperparameters.csv` - Best parameter settings found through grid search
 
 ## Results/Discussion
 
-### Performance Metrics
-- **Test Accuracy:** 68.4% (193 correct out of 282 games)
-- **Training Accuracy:** 76.6% (good learning without severe overfitting)
+### Test Accuracy
+- Achieved **68.4%**, which significantly exceeds our 55-60% target and the 52.4% break-even threshold
+- Training Accuracy: 76.6% (good learning without severe overfitting)
+- Indicates the ensemble effectively captures nonlinear patterns in NFL outcomes
 
-### Betting Simulation Results
+### Return on Investment (ROI) Simulation
 
-| Confidence Threshold | Games Bet | Accuracy | ROI |
-|---------------------|-----------|----------|-----|
-| 55% | 224 | 68.8% | 34.4% |
-| 60% | 167 | 70.7% | 38.4% |
-| 65% | 112 | 73.2% | 43.8% |
-| **70%** | **69** | **73.9%** | **45.2%** |
+We simulated a betting strategy: bet only when predicted win probability exceeded the confidence threshold. Bets are $100 each, with +100 payout and -110 loss (standard sportsbook odds).
 
-**Key Finding:** Higher confidence thresholds produce fewer bets but significantly better ROI and accuracy.
+| Confidence Threshold | Games Bet | Accuracy | Correct Bets | Wrong Bets | Profit | ROI |
+|---------------------|-----------|----------|--------------|------------|---------|-----|
+| 55% | 224 | 68.8% | 154 | 70 | $7,700 | 34.4% |
+| 60% | 167 | 70.7% | 118 | 49 | $6,410 | 38.4% |
+| 65% | 112 | 73.2% | 82 | 30 | $4,900 | 43.8% |
+| **70%** | **69** | **73.9%** | **51** | **18** | **$3,120** | **45.2%** |
 
-### Feature Importance Discovery
+**Key Finding:** Higher confidence thresholds produce fewer bets but significantly better ROI and accuracy. The 70% threshold achieved the best ROI of 45.2%.
 
-Random Forest identified **matchup analysis** as most predictive for NFL games:
+#### ROI Analysis
+![ROI Analysis](results/visualizations/rf_roi_analysis.png)
 
-**Top 5 Features:**
-1. `home_off_vs_away_def (0.131)` - Home offensive advantage
-2. `yards_advantage (0.128)` - Total yards comparison  
-3. `rolling_point_diff_advantage (0.116)` - Recent dominance
-4. `away_off_vs_home_def (0.109)` - Away offensive advantage
-5. `away_rolling_points (0.087)` - Away team recent scoring
+**ROI Performance:**
+- ROI increases with confidence level from 34.4% to 45.2%
+- Risk vs Reward analysis shows optimal betting strategy at higher confidence thresholds
+- Higher confidence leads to fewer games but more profitable outcomes
 
-**Key Insights:**
-- **Matchup features dominate:** Top 4 focus on offensive advantages and yards
-- **Recent performance matters:** Rolling averages outweigh season stats
-- **Team identity less important:** Specific team features rank lower
+### Brier Score – Probability Calibration
 
-### Hyperparameter Optimization
-**Optimal Configuration:** 300 trees, max depth 10, log₂(76) features per split, min 15 samples per split
+To measure how well our predicted probabilities aligned with actual outcomes, we evaluated the Brier score.
+
+**Brier Score: 0.218**
+
+**Interpretation:**
+- A perfect model = 0.0
+- A naive model (50/50 every time) = 0.25  
+- Our Random Forest = 0.218 → indicates a good level of predictive accuracy
 
 ### Visual Analysis
 
 #### Feature Importance Analysis
 ![Feature Importance](results/visualizations/rf_feature_importance.png)
-Shows comprehensive ranking of NFL statistics - matchup and rolling performance features dominate over team identity. Shows the model cares more about "how teams match up against each other" and "recent performance" rather than "which specific teams are playing."
 
-#### Prediction Performance
+Random Forest identified **matchup analysis** as most predictive for NFL games:
+
+**Top 5 Features:**
+- `home_off_vs_away_def (0.131)` - Home offensive advantage
+- `yards_advantage (0.128)` - Total yards comparison  
+- `rolling_point_diff_advantage (0.116)` - Recent dominance
+- `away_off_vs_home_def (0.109)` - Away offensive advantage
+- `away_rolling_points (0.087)` - Away team recent scoring
+
+**Key Insights:**
+- Matchup features dominate: Top 4 focus on offensive advantages and yards
+- Recent performance matters: Rolling averages outweigh season stats  
+- Team identity less important: Specific team features rank lower
+
+#### Model Performance Analysis
+
+**Test Accuracy:** 68.4% (exceeds 55-60% target)
+**Training Accuracy:** 76.6% (good learning without severe overfitting)
+**Best ROI:** 45.2% at 70% confidence threshold
+
+#### Prediction Confidence Analysis
 ![Prediction Analysis](results/visualizations/rf_prediction_analysis.png)
-Probability distribution and accuracy by confidence level - High confidence predictions achieve 73.2% accuracy (112 games), Medium confidence 64.3% (112 games), Low confidence 67.2% (58 games). Shows the model is well-calibrated - when it's confident about a prediction, it's usually right. This makes it trustworthy for betting decisions.
 
-#### Feature Categories
-![Feature Analysis](results/visualizations/rf_feature_analysis.png)
-Breakdown by category: Rolling/Momentum (43.9%), Matchup/Season (36.9%), Team Identity (19.2%). Shows recent team form and matchup analysis are far more important than team reputation/identity for predicting NFL games.
+**Accuracy by Confidence Level:**
+- Low confidence: 67.2% (58 games)
+- Medium confidence: 64.3% (112 games)  
+- High confidence: 73.2% (112 games)
 
-## Summary
+Shows the model is well-calibrated - when it's confident about a prediction, it's usually right. High confidence predictions achieve 73.2% accuracy, making it trustworthy for betting decisions.
 
-**Performance:** 68.4% accuracy with 45.2% ROI using selective betting strategy  
-**Discovery:** Matchup analysis and recent form more predictive than team identity  
-**Strategy:** 70% confidence threshold optimal for profitable NFL betting  
-**Model:** 300-tree ensemble effectively captures complex NFL patterns
+**Profit Timeline:**
+- Steady profit growth to approximately $9,500 over the test period
+- Consistent performance without major losing streaks
+- Demonstrates stable model performance over time
+
+#### Feature Category Analysis
+![Feature Categories](results/visualizations/rf_feature_analysis.png)
+
+**Breakdown by Category:**
+- Rolling/Momentum: 43.9%
+- Matchup/Season: 36.9%  
+- Team Identity: 19.2%
+
+Shows recent team form and matchup analysis are far more important than team reputation/identity for predicting NFL games.
+
+### Hyperparameter Optimization
+
+**Best Parameters Found:**
+- Number of trees: 300
+- Max features per split: log2 (≈6 features)
+- Max depth: 10
+- Min samples per split: 15
+- Cross-validation score: Optimized using TimeSeriesSplit
+
+**Optimal Configuration:** 300-tree ensemble with log2 feature selection effectively captures complex NFL patterns without overfitting.
+
+---
+
+| Name | Random Forest Contributions |
+|------|---------------------------|
+| Vivek | Feature importance analysis and ensemble voting evaluation |
+| Thavaisya | Model implementation, hyperparameter tuning, and analysis |  
+| Dishi | Performance metrics calculation and betting simulation |
+| Kevin | Visualization creation and comparative analysis |
+
+
 
 ## Next Steps
 - Implement **Support Vector Machine (SVM)** for optimal decision boundary analysis
