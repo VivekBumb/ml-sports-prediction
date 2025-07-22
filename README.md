@@ -6,7 +6,7 @@
 [![Machine Learning](https://img.shields.io/badge/ML-Logistic%20Regression%20%7C%20Random%20Forest%20%7C%20SVM-green.svg)](https://scikit-learn.org)
 
 **CS 4641 Machine Learning Final Project**  
-*Georgia Institute of Technology*
+
 
 ---
 
@@ -14,8 +14,6 @@
 
 ## Table of Contents
 
-- [Executive Summary](#executive-summary)
-- [Model Performance Dashboard](#model-performance-dashboard)
 - [Project Proposal](#project-proposal)
 - [Data Collection Process](#data-collection-process)
 - [Data Preprocessing](#data-preprocessing)
@@ -27,63 +25,7 @@
 - [Project Structure](#project-structure)
 - [References](#references)
 
----
 
-## Executive Summary
-
-> Develop machine learning models to predict NFL game outcomes and optimize betting strategies using objective statistical data.
-
-### Key Achievements
-
-<div align="center">
-
-| **Metric** | **Logistic Regression** | **Random Forest** | **SVM (Winner)** |
-|:----------:|:-----------------------:|:-----------------:|:----------------:|
-| **Test Accuracy** | 64.5% | **68.4%** | 65.2% |
-| **Best ROI** | 41.7% | 45.2% | **51.8%** |
-| **Brier Score** | 0.219 | **0.218** | 0.223 |
-| **Key Strength** | Interpretable | Feature Interactions | Maximum Margin |
-
-</div>
-
-### Project Highlights
-
-- **Dataset:** 1,408 NFL games (2020-2024) with 76 engineered features
-- **Best Model:** Support Vector Machine achieving 51.8% ROI
-- **Target Achievement:** All models exceeded 55-60% accuracy goal
-- **Betting Strategy:** Selective high-confidence betting maximizes profitability
-
----
-
-## Model Performance Dashboard
-
-### Performance Comparison
-
-```
-ACCURACY PERFORMANCE
-├── Random Forest:     68.4% ████████████████████████████████████
-├── SVM:              65.2% ██████████████████████████████████
-└── Logistic Reg:     64.5% █████████████████████████████████
-
-ROI PERFORMANCE (Betting Profitability)
-├── SVM:              51.8% ████████████████████████████████████████████████████
-├── Random Forest:    45.2% █████████████████████████████████████████████
-└── Logistic Reg:     41.7% ██████████████████████████████████████████
-
-PROBABILITY CALIBRATION (Brier Score - Lower is Better)
-├── Random Forest:    0.218 ████████████████████████████████████
-├── Logistic Reg:     0.219 ████████████████████████████████████
-└── SVM:              0.223 █████████████████████████████████████
-```
-
-### Key Insights
-
-> **Winner: Support Vector Machine**
-> - Highest ROI (51.8%) makes it most profitable for betting applications
-> - 77% accuracy at 70% confidence threshold for selective betting
-> - Superior risk management through maximum margin optimization
-
----
 
 ## Project Proposal
 
@@ -161,18 +103,6 @@ pip install nfl_data_py pandas numpy
 
 - `clean_nfl_games.csv` - Complete game results with scores and metadata
 
-### Error Handling
-
-The script includes robust error handling for:
-
-- Missing `nfl_data_py` package installation
-- Data compatibility checks
-
-### Data Freshness
-
-- **Current dataset:** Through 2024 NFL season (complete)
-- **For 2025 predictions:** Script can be easily updated to include new season data
-- **Update frequency:** Run script after each NFL season concludes
 
 ---
 
@@ -270,6 +200,146 @@ This setup allows the model to fairly compare all features and clearly show whic
 - `betting_targets_y.csv` - Binary target variable (home team wins)
 - `complete_betting_dataset.csv` - Full dataset with all features and targets
 - `feature_names.txt` - List of all 76 feature names
+
+---
+
+## Model Implementations
+
+## Logistic Regression
+
+Our approach consists of four primary phases: data acquisition, preprocessing, feature engineering, and model training. The following section will be discussing the training for our first model: logistic regression, implemented in `nfl_logistic_regression.py`.
+
+```bash
+# Run the logistic regression algorithm
+python nfl_logistic_regression.py
+```
+
+**Justifications:** We chose logistic regression as our baseline model because it's easy to understand and gives probability outputs needed for betting decisions. The algorithm shows clear coefficient weights that tell us which NFL statistics are most important for predicting wins.
+
+Logistic regression model offers several adavantages for NFL prediction. It provides coefficient weights atht rveals which NFL statistics are most important for predicting wins. It also helps to determine the right betting confidence levels with its probablity outputs. The model is also easy to update with new game data.
+
+We split the data chronologically - first 80% of games (1,126) for training and last 20% (282) for testing. This prevents data leakage and mimics real betting where we predict future games using only past data.
+
+### Logistic Regression Steps
+
+#### 1. Data Preparation
+**Functions:** `pd.read_csv()`  
+Loads our preprocessed NFL dataset, which includes binary home win targets and 1,408 games with 76 features. Our preprocessing pipeline has already cleaned and standardized the data.
+
+#### 2. Model Initialization
+**Functions:** `__init__()`  
+Sets up the logistic regression model with learning parameters: learning rate (0.1), maximum iterations (1,000), and convergence tolerance. These control how fast the model learns and when to stop training.
+
+#### 3. Start Training 
+**Functions:** `fit()`  
+Begins the training process by adding a bias term and initializing 77 random weights (one for each feature plus bias). The model starts with random guesses for all coefficients.
+
+#### 4. Training Loop (1000 Iterations)
+**Functions:** `for loop` inside `fit()`  
+Repeats the learning process up to 1,000 times. In each iteration, the model makes predictions on all training games and adjusts weights to reduce prediction errors.
+
+##### 4a: Calculate Cost Function
+**Functions:** `compute_cost()`   
+Measures how wrong the current predictions are by comparing them to actual game results across all 1,126 training games.
+
+###### 4a.1: Apply Sigmoid Function
+**Functions:** `sigmoid()`  
+Converts raw mathematical calculations into probabilities between 0 and 1, representing the chance of home team victory.
+
+##### 4b: Compute Gradient
+**Functions:** `compute_gradient()`  
+Determines which direction to adjust each of the 77 coefficients to improve predictions.
+
+##### 4c: Weight Update
+**Functions:** Direct assignment with `+`, `*` operators
+Updates all coefficients based on gradient recommendations, making small improvements to prediction accuracy.
+
+##### 4d: Check Convergence
+**Functions:** `np.linalg.norm()`  
+Checks if coefficient changes are very small, indicating the model has learned as much as possible and training can stop.
+
+#### 5: Store Optimized Coefficients
+**Functions:** Assignment to `self.weights`  
+After training completes, saves the final 77 optimized coefficients that predict NFL games with 66.3% accuracy.
+
+
+### Output Files Generated by nfl_logistic_regression.py
+
+- `logistic_regression_predictions.csv` - All game predictions with probabilities and confidence levels
+- `feature_importance.csv` - Ranked coefficients showing which NFL stats matter most for predictions
+- `model_performance.csv` - Accuracy metrics and key performance indicators
+- `training_cost_history.csv` - Algorithm convergence data from gradient ascent
+- `betting_simulation.csv` - ROI analysis for different confidence thresholds
+
+### Results/Discussion
+
+#### Test Accuracy  
+Our logistic regression model performed significantly better than the 52.4% break-even threshold required for profitable betting, with a test accuracy of **66.3%**. The fact that this performance is particularly notable when compared to the baseline home win rate of 53.8% shows that our model can correctly detect important trends in NFL game results that go beyond home field advantage.
+
+#### Return on Investment (ROI) Simulation
+
+We modelled a betting strategy that only wagers when the expected win probability was higher than 60% (or lower than 40% for away wins). With standard sportsbook odds of +100 for winning wagers and -110 for losing wagers, each wager was set at $100.
+
+173 games that satisfied the betting confidence level were found by our model. Out of these high-confidence predictions, we were right in 122 games and wrong in 51. With a total profit of $6,590.00 from our $17,300.00 investment, this method of selective betting produced an outstanding 38.1% return on investment.
+
+Our high-confidence predictions achieved over 72.7% accuracy, indicating that model confidence was a strong predictor of betting success. This implies that in addition to producing accurate predictions, our logistic regression model offers trustworthy confidence estimates that can direct successful wagering choices.
+
+#### Brier Score – Probability Calibration
+
+To measure how well our predicted probabilities aligned with actual outcomes, we evaluated the Brier score. A perfect model would have a Brier score of 0.0, while a naive model that predicts 50/50 outcomes for every game would have a score of **0.25**. Our model's 0.219 score shows that our probability estimates are well-calibrated and have a good level of predictive accuracy because it is much closer to the perfect score than the naive baseline.
+
+#### Visual Analysis
+
+##### Cost Function Convergence
+
+<div align="center">
+<img src="results/visualizations/cost_convergence_plot.png" alt="Cost Function Convergence" width="600" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<br><em>Figure 1: Gradient ascent convergence showing steady cost reduction over 1000 iterations</em>
+</div>
+
+##### Feature Importance
+
+<div align="center">
+<img src="results/visualizations/feature_importance_top15.png" alt="Feature Importance" width="600"/>
+<br><em>Figure 2: Top 15 most important features for NFL game prediction</em>
+</div>
+
+- Top 5 features included:
+  - `away_KC (-0.593, strongest predictor)`
+  - `home_ARI (-0.527)`
+  - `home_KC (+0.465)`
+  - `away_JAX (+0.351)`
+  - `home_GB (+0.346)`
+
+- Suggests both recent team form and team identity matter a significant amount
+
+##### Prediction Confidence and Profit Timeline
+
+<div align="center">
+<img src="results/visualizations/prediction_analysis.png" alt="Prediction Analysis" width="800" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<br><em>Figure 3: Model performance analysis showing accuracy by confidence level and profit timeline</em>
+</div>
+
+The analysis shows a relationship between model confidence and prediction accuracy. Low confidence predictions achieved 59.6% accuracy while medium confidence predictions achieved 61.2% accuracy. The best findings were that our high confidence predictions achieved a high performance of 72.7% accuracy.  
+Our betting startegy at 60% confidence threshold made a profit of $6,590 in the 2024 test season. If we had taken maximumrisk we would have generated aprogfit of $8,250. the results demonstrated stable model performace over time.
+
+##### ROI vs Confidence Threshold
+
+<div align="center">
+<img src="results/visualizations/roi_analysis.png" alt="ROI Analysis" width="600" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<br><em>Figure 4: ROI optimization analysis across different confidence thresholds</em>
+</div>
+
+Our analysis revealed that ROI performance peaked when the confidence level of the model is more than 60%, while **65-70** threshold was identified as the most profitable. This balance threshold being between betting frequency and accuracy optimization was most favorable. The 65% threshold generated a 42.7% ROI with $5,640 profit across 132 games, while the more selective 70% threshold achieved an even higher 46.3% ROI with $4,170 profit on 90 games, demonstrating that increased selectivity can lead to superior returns despite fewer betting opportunities.
+
+### Team Contributions
+
+| Name | Midterm Contributions |
+|------|----------------------|
+| Kevin | README documentation, project introduction, problem statement, and final report writing |
+| Thavaisya | Data collection/download, results analysis and visualizations |
+| Dishi | Data preprocessing pipeline, feature engineering, and performance evaluation metrics |
+| Vivek | Model implementation (logistic regression) |
 
 ---
 
