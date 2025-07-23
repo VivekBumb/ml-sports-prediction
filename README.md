@@ -294,9 +294,10 @@ To measure how well our predicted probabilities aligned with actual outcomes, we
 ##### Feature Importance
 
 <div align="center">
-<img src="results/visualizations/feature_importance_top15.png" alt="Feature Importance" width="600 style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<img src="results/visualizations/feature_importance_top15.png" alt="Cost Function Convergence" width="600" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
 <br><em>Figure 2: Top 15 most important features for NFL game prediction</em>
-</div>
+</div>  
+
 
 - Top 5 features included:
   - `away_KC (-0.593, strongest predictor)`
