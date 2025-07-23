@@ -2,8 +2,6 @@
 
 # NFL Betting Prediction System
 
-[![Machine Learning](https://img.shields.io/badge/ML-Logistic%20Regression%20%7C%20Random%20Forest%20%7C%20SVM-green.svg)](https://scikit-learn.org)
-
 **CS 4641 Machine Learning Final Project**  
 
 
@@ -299,7 +297,7 @@ To measure how well our predicted probabilities aligned with actual outcomes, we
 ##### Feature Importance
 
 <div align="center">
-<img src="results/visualizations/feature_importance_top15.png" alt="Feature Importance" width="600"/>
+<img src="results/visualizations/feature_importance_top15.png" alt="Feature Importance" width="600 style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
 <br><em>Figure 2: Top 15 most important features for NFL game prediction</em>
 </div>
 
@@ -685,15 +683,16 @@ Out of 1,126 training games, **894 support vectors** were identified, representi
 
 ### Comprehensive Model Comparison
 
-<div align="center">
 
-| **Model** | **Test Accuracy** | **Best ROI** | **Key Strength** | **Complexity** | **Brier Score** |
-|:---------:|:-----------------:|:------------:|:----------------:|:--------------:|:---------------:|
-| **Logistic Regression** | 64.5% | 41.7% | Interpretable | Low | 0.219 |
-| **Random Forest** | **68.4%** | 45.2% | Feature Interactions | Medium | **0.218** |
-| **SVM** | 65.2% | **51.8%** | **Maximum Margin** | Medium | 0.223 |
 
-</div>
+| Model | Test Accuracy | Best ROI | Key Strength | Complexity | Brier Score |
+|-------|---------------|----------|--------------|------------|-------------|
+| Logistic Regression | 64.5% | 41.7% | Interpretable | Low | 0.219 |
+| Random Forest | **68.4%** | 45.2% | Feature Interactions | Medium | **0.218** |
+| SVM | 65.2% | **51.8%** | Maximum Margin | Medium | 0.223 |
+
+
+
 
 ### Winner: Support Vector Machine
 > **Why SVM Won:**
