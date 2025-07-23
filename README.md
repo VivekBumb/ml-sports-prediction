@@ -766,7 +766,7 @@ These models have immense practical value because they act as data-based substit
         └── svm_roi_analysis.png                 # SVM ROI performance analysis
 ```
 <div align="center">
-<img src="results/visualizations/gantt_chart.png" alt="SVM Prediction Analysis" width="600" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<img src="results/visualizations/gantt_chart.png" alt="SVM Prediction Analysis" width="800" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
 <br><em>Figure 12: Gantt Chart</em>
 </div>
 
