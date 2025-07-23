@@ -711,8 +711,8 @@ The analysis of feature importance reveals distinct patterns across different mo
 The three models demonstrate complementary strengths that make each valuable for different aspects of sports prediction. Random Forest excels in overall predictive accuracy, achieving the highest success rate at 68.4%, making it ideal for scenarios where pure prediction accuracy is the primary concern. SVM distinguishes itself through superior betting profitability, delivering an exceptional 51.8% return on investment
 
 
-**Practical Applications:**
-These models have immense practical value because they act as data-based substitutes for traditional perception-driven gambling lines typically driven by qualitative analysis and sentiment of the market. The method places greater stock in objective statistical analysis that shies away from the tweet-driven vision of popular social media and prevailing popular opinion and instead highlights quantifiable trends and historical performance figures. Most importantly, the system has a disciplined sports betting plan that incorporates good risk management practices, enabling individuals to make well-informed bets using statistical information rather than social media.
+**Next Steps:**
+These models have immense practical value because they act as data-based substitutes for traditional perception-driven gambling lines typically driven by qualitative analysis and sentiment of the market. In the future, rather than relying solely on historical data, we hope to test these models using real-world live games to see how well they function. In order to obtain real-time updates, this would entail integrating our system with live NFL statistics and possibly collaborating with betting platforms. In order to improve our models' ability to predict game results, we're also interested in including more specific data about individual players and sophisticated football metrics.
 
 ---
 
@@ -765,6 +765,11 @@ These models have immense practical value because they act as data-based substit
         ├── svm_prediction_analysis.png          # SVM prediction confidence analysis
         └── svm_roi_analysis.png                 # SVM ROI performance analysis
 ```
+<div align="center">
+<img src="results/visualizations/gantt_chart.png" alt="SVM Prediction Analysis" width="600" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<br><em>Figure 12: Gantt Chart</em>
+</div>
+
 
 ### Quick Start Guide
 
