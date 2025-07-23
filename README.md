@@ -1,13 +1,10 @@
-<div align="center">
+
 
 # NFL Betting Prediction System
 
 **CS 4641 Machine Learning Final Project**  
 
 
----
-
-</div>
 
 ## Table of Contents
 
