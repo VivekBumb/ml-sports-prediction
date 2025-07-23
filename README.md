@@ -452,7 +452,12 @@ To assess how well our predicted probabilities aligned with actual outcomes, we 
 Random Forest identified **matchup analysis** as most predictive for NFL games:
 
 **Top 5 Features:**  
-The most important features identified by the model were: `home_off_vs_away_def` (0.131), which captures the home team's offensive advantage; `yards_advantage` (0.128), comparing total yardage between teams; and `rolling_point_diff_advantage` (0.116), which reflects recent dominance based on point differential. Also influential were `away_off_vs_home_def` (0.109), measuring the away team's offensive strength against the home defense, and `away_rolling_points` (0.087), representing the away team’s recent scoring performance.
+The most important features identified by the model were:  
+`home_off_vs_away_def` (0.131) captures the home team's offensive advantage  
+`yards_advantage` (0.128) comparing total yardage between teams  
+`rolling_point_diff_advantage` (0.116) reflects recent dominance based on point differential  
+`away_off_vs_home_def` (0.109) measuring the away team's offensive strength against the home defense  
+`away_rolling_points` (0.087) representing the away team’s recent scoring performance  
 
 
 **Key Insights:**  
@@ -813,8 +818,6 @@ python nfl_svm.py
 
 <div align="center">
 
-**CS 4641 Machine Learning Final Project**  
-*Georgia Institute of Technology*
 
 **Team Members:** Eshaan, Thavaisya, Dishi, Vivek, Kevin
 
