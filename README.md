@@ -717,53 +717,138 @@ These models have immense practical value because they act as data-based substit
 
 ### Directory Organization
 
-```
-/: Root directory of the NFL betting prediction project
-├── README.md                                    # Main project documentation with methodology, results, and analysis
-├── data/                                        # All datasets and processed data files
-│   └── processed/                               # Machine learning ready datasets
-│       ├── betting_features_X.csv               # ML-ready feature matrix (1,408 × 76)
-│       ├── betting_targets_y.csv                # Binary target variable (home team wins)
-│       ├── complete_betting_dataset.csv         # Full dataset with all features and targets
-│       ├── clean_nfl_games.csv                  # Cleaned NFL game results with scores and metadata
-│       ├── team_season_stats.csv                # Aggregated team performance by season
-│       └── feature_names.txt                    # List of all 76 feature names
-├── src/                                         # Source code for data processing and machine learning
-│   ├── simplified_nfl_data.py                   # Data download and preprocessing pipeline
-│   ├── logistic_regression.py                   # Logistic regression model implementation and training
-│   ├── nfl_random_forest.py                     # Random Forest model implementation
-│   └── nfl_svm.py                               # Support Vector Machine model implementation
-└── results/                                     # All model outputs and analysis results
-    ├── predictions/                             # CSV files with model predictions and performance metrics
-    │   ├── logistic_regression_predictions.csv  # All game predictions with probabilities and confidence levels
-    │   ├── feature_importance.csv               # Ranked coefficients showing which NFL stats matter most for predictions
-    │   ├── betting_simulation.csv               # ROI analysis for different confidence thresholds
-    │   ├── model_performance.csv                # Accuracy metrics and key performance indicators
-    │   ├── training_cost_history.csv            # Algorithm convergence data from gradient ascent
-    │   ├── rf_betting_simulation.csv            # Random Forest betting simulation results
-    │   ├── rf_feature_importance.csv            # Random Forest feature importance rankings
-    │   ├── rf_performance_metrics.csv           # Random Forest performance analysis
-    │   ├── rf_predictions.csv                   # Random Forest predictions
-    │   ├── model_comparison_final.csv           # Cross-model comparison results
-    │   ├── svm_betting_simulation.csv           # SVM betting simulation results
-    │   ├── svm_hyperparameters.csv              # SVM optimal hyperparameters
-    │   ├── svm_performance_metrics.csv          # SVM performance analysis
-    │   └── svm_predictions.csv                  # SVM predictions
-    └── visualizations/                          # Charts and plots for analysis (13 total)
-        ├── cost_convergence_plot.png            # Training convergence visualization
-        ├── feature_importance_top15.png         # Top 15 most important features chart
-        ├── prediction_analysis.png              # Prediction confidence and profit analysis
-        ├── rf_feature_analysis.png              # Random Forest feature category breakdown
-        ├── rf_feature_importance.png            # Random Forest feature importance rankings
-        ├── rf_prediction_analysis.png           # Random Forest prediction confidence analysis
-        ├── rf_roi_analysis.png                  # Random Forest ROI performance analysis
-        ├── roi_analysis.png                     # ROI analysis by confidence threshold
-        ├── svm_analysis.png                     # SVM comprehensive analysis overview
-        ├── svm_prediction_analysis.png          # SVM prediction confidence analysis
-        └── svm_roi_analysis.png                 # SVM ROI performance analysis
-```
+`/`:
+Root directory of the NFL betting prediction project
+
+`/README.md`:
+Main project documentation with methodology, results, and analysis
+
+`/data/`:
+All datasets and processed data files
+
+`/data/processed/`:
+Machine learning ready datasets
+
+`/data/processed/betting_features_X.csv`:
+ML-ready feature matrix (1,408 × 76)
+
+`/data/processed/betting_targets_y.csv`:
+Binary target variable (home team wins)
+
+`/data/processed/complete_betting_dataset.csv`:
+Full dataset with all features and targets
+
+`/data/processed/clean_nfl_games.csv`:
+Cleaned NFL game results with scores and metadata
+
+`/data/processed/team_season_stats.csv`:
+Aggregated team performance by season
+
+`/data/processed/feature_names.txt`:
+List of all 76 feature names
+
+`/src/`:
+Source code for data processing and machine learning
+
+`/src/simplified_nfl_data.py`:
+Data download and preprocessing pipeline
+
+`/src/logistic_regression.py`:
+Logistic regression model implementation and training
+
+`/src/nfl_random_forest.py`:
+Random Forest model implementation
+
+`/src/nfl_svm.py`:
+Support Vector Machine model implementation
+
+`/results/`:
+All model outputs and analysis results
+
+`/results/predictions/`:
+CSV files with model predictions and performance metrics
+
+`/results/predictions/logistic_regression_predictions.csv`:
+All game predictions with probabilities and confidence levels
+
+`/results/predictions/feature_importance.csv`:
+Ranked coefficients showing which NFL stats matter most for predictions
+
+`/results/predictions/betting_simulation.csv`:
+ROI analysis for different confidence thresholds
+
+`/results/predictions/model_performance.csv`:
+Accuracy metrics and key performance indicators
+
+`/results/predictions/training_cost_history.csv`:
+Algorithm convergence data from gradient ascent
+
+`/results/predictions/rf_betting_simulation.csv`:
+Random Forest betting simulation results
+
+`/results/predictions/rf_feature_importance.csv`:
+Random Forest feature importance rankings
+
+`/results/predictions/rf_performance_metrics.csv`:
+Random Forest performance analysis
+
+`/results/predictions/rf_predictions.csv`:
+Random Forest predictions
+
+`/results/predictions/model_comparison_final.csv`:
+Cross-model comparison results
+
+`/results/predictions/svm_betting_simulation.csv`:
+SVM betting simulation results
+
+`/results/predictions/svm_hyperparameters.csv`:
+SVM optimal hyperparameters
+
+`/results/predictions/svm_performance_metrics.csv`:
+SVM performance analysis
+
+`/results/predictions/svm_predictions.csv`:
+SVM predictions
+
+`/results/visualizations/`:
+Charts and plots for analysis (13 total)
+
+`/results/visualizations/cost_convergence_plot.png`:
+Training convergence visualization
+
+`/results/visualizations/feature_importance_top15.png`:
+Top 15 most important features chart
+
+`/results/visualizations/prediction_analysis.png`:
+Prediction confidence and profit analysis
+
+`/results/visualizations/rf_feature_analysis.png`:
+Random Forest feature category breakdown
+
+`/results/visualizations/rf_feature_importance.png`:
+Random Forest feature importance rankings
+
+`/results/visualizations/rf_prediction_analysis.png`:
+Random Forest prediction confidence analysis
+
+`/results/visualizations/rf_roi_analysis.png`:
+Random Forest ROI performance analysis
+
+`/results/visualizations/roi_analysis.png`:
+ROI analysis by confidence threshold
+
+`/results/visualizations/svm_analysis.png`:
+SVM comprehensive analysis overview
+
+`/results/visualizations/svm_prediction_analysis.png`:
+SVM prediction confidence analysis
+
+`/results/visualizations/svm_roi_analysis.png`:
+SVM ROI performance analysis
+
+
 <div align="center">
-<img src="results/visualizations/gantt_chart.png" alt="SVM Prediction Analysis" width="800" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
+<img src="results/visualizations/gantt_chart.png" alt="SVM Prediction Analysis" width="1000" style="box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 1px solid #ddd; border-radius: 8px;"/>
 <br><em>Figure 12: Gantt Chart</em>
 </div>
 
